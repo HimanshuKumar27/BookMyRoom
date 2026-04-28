@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Browse hotels and rooms across India. Filter by type, city, and availability. Best prices guaranteed.">
+  <title>All Rooms - BookMyRoom</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/favicon-192.png">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap" media="print" onload="this.media='all'">
+  <link rel="preload" href="css/tailwind.css?v=3" as="style">
+  <link rel="stylesheet" href="css/tailwind.css?v=3">
+</head>
+<body>
+
+<nav class="navbar" id="navbar"></nav>
+
+<!-- Page Header -->
+<div class="page-header">
+  <span class="label block mb-4" style="color:var(--color-primary);letter-spacing:2px;font-size:0.8rem;font-weight:600;text-transform:uppercase;">Browse Rooms</span>
+  <h1 class="font-display">Hotels & <span style="color:var(--color-primary)">Rooms</span></h1>
+  <p>Find the best stays across India at great prices.</p>
+</div>
+
+<!-- 2-Column Layout Container -->
+<section class="section" style="padding-top:32px;">
+  <div class="container" style="padding:0 24px;">
+    
+    <div class="flex flex-col lg:flex-row gap-8">
+      
+      <!-- Left Sidebar (Filters) -->
+      <aside class="w-full lg:w-1/4">
+        <div class="glass-card sticky top-24 p-6 shadow-sm border border-gray-100 rounded-2xl">
+          <h2 class="text-xl font-display font-semibold mb-6 flex justify-between items-center">
+            Filters
+            <button class="text-sm text-primary hover:text-primary-dark font-medium" id="btn-clear-filters">Clear All</button>
+          </h2>
+          
+          <div class="space-y-6">
+            <!-- Room Type -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Room Type</label>
+              <select class="form-control w-full rounded-xl border-gray-200" id="filter-type">
+                <option value="">All Room Types</option>
+                <option value="Single">Single</option>
+                <option value="Double">Double</option>
+                <option value="Suite">Suite</option>
+                <option value="Deluxe">Deluxe</option>
+              </select>
+            </div>
+            
+            <!-- City -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">City</label>
+              <select class="form-control w-full rounded-xl border-gray-200" id="filter-city">
+                <option value="">All Cities</option>
+                <option value="Darjeeling">Darjeeling</option>
+                <option value="Goa">Goa</option>
+                <option value="Jaipur">Jaipur</option>
+                <option value="Jaisalmer">Jaisalmer</option>
+                <option value="Jodhpur">Jodhpur</option>
+                <option value="Kochi">Kochi</option>
+                <option value="Manali">Manali</option>
+                <option value="Munnar">Munnar</option>
+                <option value="Mysore">Mysore</option>
+                <option value="Ooty">Ooty</option>
+                <option value="Rishikesh">Rishikesh</option>
+                <option value="Shimla">Shimla</option>
+                <option value="Udaipur">Udaipur</option>
+                <option value="Varanasi">Varanasi</option>
+              </select>
+            </div>
+
+            <!-- Price Range -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Price Range</label>
+              <select class="form-control w-full rounded-xl border-gray-200" id="filter-price">
+                <option value="">All Prices</option>
+                <option value="under_1000">Under ₹1,000</option>
+                <option value="1000_1500">₹1,000 - ₹1,500</option>
+                <option value="above_1500">Above ₹1,500</option>
+              </select>
+            </div>
+            
+            <!-- Status -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Availability</label>
+              <select class="form-control w-full rounded-xl border-gray-200" id="filter-status">
+                <option value="">All Status</option>
+                <option value="Available">Available</option>
+                <option value="Booked">Booked</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Content (Room Listings) -->
+      <main class="w-full lg:w-3/4">
+        
+        <!-- Results Header -->
+        <div class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+          <div>
+            <h2 class="text-2xl font-display font-semibold text-gray-900" id="results-title">Available Rooms</h2>
+            <p class="text-gray-500 text-sm mt-1" id="results-count">Showing results...</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <label class="text-sm font-medium text-gray-600">Sort by:</label>
+            <select id="sort-by" class="form-control w-auto rounded-xl border-gray-200" onchange="handleSort()">
+              <option value="recommended">Recommended</option>
+              <option value="price_low">Price: Low to High</option>
+              <option value="price_high">Price: High to Low</option>
+              <option value="rating">Highest Rated</option>
+              <option value="newest">Newest</option>
+            </select>
+          </div>
+        </div>
+        <!-- Active Filters Display -->
+        <div id="active-filters" class="flex flex-wrap gap-2 mb-4 hidden">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Rooms List -->
+        <div class="flex flex-col gap-6" id="rooms-grid">
+          <!-- Room cards loaded dynamically -->
+        </div>
+
+        <!-- Loading State -->
+        <div id="rooms-loading" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-12 text-center">
+          <div class="spinner mx-auto border-4 border-primary border-t-transparent rounded-full w-10 h-10 animate-spin"></div>
+          <p class="text-gray-500 mt-4 font-medium">Searching for the best stays...</p>
+        </div>
+      
+        <!-- Empty State -->
+        <div id="rooms-empty" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-16 text-center hidden">
+          <div class="text-gray-300 mb-4 flex justify-center">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16"/>
+              <path d="M1 21h22"/>
+              <path d="M9 7h1"/>
+              <path d="M9 11h1"/>
+              <path d="M14 7h1"/>
+              <path d="M14 11h1"/>
+              <path d="M9 15h6v6H9z"/>
+            </svg>
+          </div>
+          <h3 class="font-display text-xl font-semibold mb-2 text-gray-900">No rooms found</h3>
+          <p class="text-gray-500">Try adjusting your filters or search in a different city.</p>
+          <button class="mt-6 px-6 py-2 bg-primary/10 text-primary hover:bg-primary hover:text-white rounded-full transition-colors font-medium" onclick="document.getElementById('btn-clear-filters').click()">Clear Filters</button>
+        </div>
+      </main>
+      
+    <!-- Compare Bar (floating) -->
+    <div id="compare-bar" class="compare-bar">
+      <div class="flex items-center">
+        <span class="compare-bar-title">
+          Compare <span id="compare-count" class="compare-bar-count">0</span> rooms
+        </span>
+        <button class="compare-bar-clear ml-4" onclick="clearCompare()">Clear all</button>
+      </div>
+      <button class="compare-bar-btn" onclick="openCompareModal()">Compare Now</button>
+    </div>
+
+    <!-- Compare Modal -->
+    <div class="modal-overlay" id="compare-modal" onclick="if(event.target === this) closeCompareModal()">
+      <div class="modal compare-modal">
+        <button class="modal-close" onclick="closeCompareModal()">&times;</button>
+        <h2 class="font-display">Compare Rooms</h2>
+        <div id="compare-content" class="grid gap-6">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </div>
+    
+    </div>
+  </div>
+</section>
+
+<footer class="footer mt-12" id="footer"></footer>
+
+<script type="module">
+  import { renderNavbar, renderFooter, updateNavbarAuth, formatCurrency, getGSTInfo, checkAdmin, showToast, escapeHTML, parseSearchCriteria, getUnavailableRoomIds } from './js/utils.js?v=2';
+  import { supabase } from './js/supabase-config.js';
+
+  renderNavbar('rooms');
+  renderFooter();
+
+  const grid = document.getElementById('rooms-grid');
+  const loading = document.getElementById('rooms-loading');
+  const empty = document.getElementById('rooms-empty');
+  const resultsCount = document.getElementById('results-count');
+  let roomsMap = {};
+  let compareList = JSON.parse(localStorage.getItem('brm_compare') || '[]');
+
+  // Auth state
+  const { data: { user } } = await supabase.auth.getUser();
+  if (user) {
+    const isAdmin = await checkAdmin(user.id);
+    updateNavbarAuth(user, isAdmin);
+  }
+
+  // Default fallback room images
+  const defaultImages = {
+    'Single': 'assets/images/room-standard.webp',
+    'Double': 'assets/images/room-premium.webp',
+    'Suite': 'assets/images/room-deluxe.webp',
+    'Deluxe': 'assets/images/room-deluxe.webp'
+  };
+
+  function renderRoomCard(room) {
+    const imgSrc = escapeHTML((room.images && room.images.length > 0) ? room.images[0] : (defaultImages[room.type] || 'assets/images/room-standard.webp'));
+    const roomId = escapeHTML(room.id);
+    const roomName = escapeHTML(room.name);
+    const roomType = escapeHTML(room.type);
+    const roomCity = escapeHTML(room.city || 'India');
+    const roomStatus = escapeHTML(room.displayStatus || room.status || 'Available');
+    const isAvailable = room.isSearchAvailable ?? room.status === 'Available';
+    
+    // Status badges using Tailwind
+    const statusMarkup = isAvailable
+      ? `<span class="px-3 py-1 bg-green-100 text-green-700 text-xs font-bold uppercase tracking-wider rounded-full self-start">${roomStatus}</span>` 
+      : `<span class="px-3 py-1 bg-red-100 text-red-700 text-xs font-bold uppercase tracking-wider rounded-full self-start">${roomStatus}</span>`;
+    
+    // Rating stars (dynamic or default)
+    const rating = room.rating || 4.5;
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 >= 0.5;
+    const reviewCount = room.review_count || Math.floor(10 + Math.random() * 90);
+    const ratingColor = rating >= 4.5 ? 'text-green-500' : (rating >= 4.0 ? 'text-yellow-500' : 'text-orange-500');
+    
+    const amenities = (room.amenities || []).slice(0, 4).map(a => 
+      `<span class="flex items-center text-sm text-gray-600 bg-gray-50 px-3 py-1 rounded-full"><svg class="w-4 h-4 mr-1 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>${escapeHTML(a)}</span>`
+    ).join('');
+    
+    const gst = getGSTInfo(room.price);
+    const viewCount = room.view_count || Math.floor(10 + Math.random() * 90);
+
+    return `
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col md:flex-row group cursor-pointer reveal visible">
+        <!-- Image Section -->
+        <div class="w-full md:w-2/5 h-64 md:h-auto relative overflow-hidden">
+          <img src="${imgSrc}" alt="${roomName}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+          <!-- Wishlist button -->
+          <div class="compare-checkbox-wrapper">
+            <input type="checkbox" class="compare-checkbox" onchange="toggleCompare('${roomId}', this)"
+              ${compareList.includes(room.id) ? 'checked' : ''} title="Add to comparison">
+          </div>
+          <!-- Cancellation badge -->
+          <div class="absolute bottom-3 left-3 ${compareList.includes(room.id) ? 'left-14' : ''}">
+            <span class="px-2.5 py-1 bg-white/95 backdrop-blur-sm text-green-700 text-[10px] font-bold uppercase tracking-wider rounded-md shadow-sm flex items-center gap-1">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              Free Cancel
+            </span>
+          </div>
+          <!-- Status badge -->
+          ${statusMarkup.replace('self-start', '').replace('rounded-full', 'rounded-md').replace('px-3 py-1', 'px-2.5 py-1')}
+        </div>
+        
+        <!-- Details Section -->
+        <div class="w-full md:w-3/5 p-6 flex flex-col justify-between">
+          <div class="flex justify-between items-start mb-2">
+            <div>
+              <div class="flex items-center gap-2 mb-2">
+                <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">${roomType}</span>
+                <span class="w-1 h-1 bg-gray-300 rounded-full"></span>
+                <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">${roomCity}</span>
+              </div>
+              <h3 class="text-xl md:text-2xl font-display font-bold text-gray-900 leading-tight mb-3 group-hover:text-primary transition-colors">${roomName}</h3>
+            </div>
+          </div>
+          
+          <!-- Rating + Social Proof -->
+          <div class="flex items-center gap-3 mb-3">
+            <div class="flex items-center gap-2">
+              <div class="flex ${ratingColor} text-sm">${'★'.repeat(fullStars)}${hasHalfStar ? '½' : ''}</div>
+              <span class="text-sm font-semibold text-gray-700">${rating.toFixed(1)}</span>
+              <span class="text-xs text-gray-400">(${reviewCount} reviews)</span>
+            </div>
+            <span class="text-xs text-gray-300">|</span>
+            <div class="flex items-center gap-1 text-xs text-amber-600">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+              ${viewCount} views today
+            </div>
+          </div>
+          
+          <div class="flex flex-wrap gap-2 mb-6">
+            ${amenities}
+            ${(room.amenities && room.amenities.length > 4) ? `<span class="flex items-center text-sm text-gray-500 px-3 py-1">+${room.amenities.length - 4} more</span>` : ''}
+          </div>
+          
+          <div class="flex flex-col md:flex-row justify-between items-start md:items-end mt-auto pt-4 border-t border-gray-100">
+            <div class="mb-4 md:mb-0">
+              <div class="flex items-baseline">
+                <span class="text-2xl font-bold text-gray-900">${formatCurrency(room.price)}</span>
+                <span class="text-sm text-gray-500 ml-1">/ night</span>
+              </div>
+              <div class="mt-1 text-xs text-gray-400">+ ${gst.percent} GST • No hidden charges</div>
+            </div>
+            <div class="flex gap-2">
+              <a href="room-detail.html?id=${roomId}${window.location.search ? `&${window.location.search.slice(1)}` : ''}" class="inline-flex justify-center items-center px-6 py-3 bg-primary text-white font-semibold rounded-xl hover:bg-primary-dark hover:-translate-y-0.5 transition-all w-full md:w-auto shadow-md hover:shadow-lg">
+                View Details
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  // Load rooms from Supabase
+  async function loadRooms() {
+    loading.classList.remove('hidden');
+    empty.classList.add('hidden');
+    grid.innerHTML = '';
+
+    const typeVal = document.getElementById('filter-type').value;
+    const cityVal = document.getElementById('filter-city').value;
+    const priceVal = document.getElementById('filter-price').value;
+    const statusVal = document.getElementById('filter-status').value;
+    const sortBy = document.getElementById('sort-by')?.value || 'recommended';
+    const params = new URLSearchParams(window.location.search);
+    const searchCriteria = parseSearchCriteria(params);
+
+    // Build Supabase query with server-side filtering
+    let query = supabase.from('rooms').select('*');
+    
+    if (typeVal) query = query.eq('type', typeVal);
+    if (cityVal) query = query.eq('city', cityVal);
+    if (statusVal && !searchCriteria.hasDateRange) query = query.eq('status', statusVal);
+    if (priceVal === 'under_1000') query = query.lt('price', 1000);
+    else if (priceVal === '1000_1500') query = query.gte('price', 1000).lte('price', 1500);
+    else if (priceVal === 'above_1500') query = query.gt('price', 1500);
+
+    // Sorting
+    switch(sortBy) {
+      case 'price_low':
+        query = query.order('price', { ascending: true });
+        break;
+      case 'price_high':
+        query = query.order('price', { ascending: false });
+        break;
+      case 'rating':
+        query = query.order('rating', { ascending: false });
+        break;
+      case 'newest':
+        query = query.order('created_at', { ascending: false });
+        break;
+      default:
+        query = query.order('created_at', { ascending: false });
+    }
+
+    const { data: rooms, error } = await query;
+    let displayedRooms = rooms || [];
+    let availabilityWarning = false;
+
+    if (!error && searchCriteria.hasDateRange) {
+      try {
+        const unavailableIds = await getUnavailableRoomIds(searchCriteria.checkin, searchCriteria.checkout);
+        displayedRooms = displayedRooms.map(room => {
+          const capacityMatches = (room.capacity || 1) >= searchCriteria.guests;
+          const openForSale = room.status === 'Available';
+          const dateAvailable = !unavailableIds.has(room.id);
+          const isSearchAvailable = openForSale && dateAvailable && capacityMatches;
+          let displayStatus = 'Available';
+          if (!openForSale) displayStatus = 'Booked';
+          else if (!dateAvailable) displayStatus = 'Unavailable';
+          else if (!capacityMatches) displayStatus = 'Too Small';
+          return { ...room, isSearchAvailable, displayStatus };
+        }).filter(room => {
+          if (statusVal === 'Booked') return !room.isSearchAvailable;
+          return room.isSearchAvailable;
+        });
+      } catch (availabilityError) {
+        availabilityWarning = true;
+        console.warn('Availability check failed:', availabilityError);
+      }
+    }
+
+    loading.classList.add('hidden');
+
+    // Update page title and filters display
+    const titleEl = document.getElementById('results-title');
+    const filtersEl = document.getElementById('active-filters');
+    let titleParts = [];
+    
+    // Parse query params for contextual info
+    const checkin = searchCriteria.checkin;
+    const checkout = searchCriteria.checkout;
+    const guests = searchCriteria.guests;
+    const roomsParam = searchCriteria.rooms;
+
+    if (params.has('guests')) titleParts.push(`${guests} guests`);
+    if (params.has('rooms')) titleParts.push(`${roomsParam} room${roomsParam > 1 ? 's' : ''}`);
+    
+    if (checkin && checkout) {
+      const ci = new Date(checkin);
+      const co = new Date(checkout);
+      titleParts.push(`${ci.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })} - ${co.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}`);
+    } else if (checkin) {
+      titleParts.push(`from ${new Date(checkin).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}`);
+    }
+
+    // Build active filter tags
+    const activeTags = [];
+    if (cityVal) activeTags.push({ label: `City: ${cityVal}`, value: 'city' });
+    if (typeVal) activeTags.push({ label: `Type: ${typeVal}`, value: 'type' });
+    if (priceVal) activeTags.push({ label: `Price: ${priceVal === 'under_1000' ? 'Under ₹1,000' : priceVal === '1000_1500' ? '₹1,000-1,500' : 'Above ₹1,500'}`, value: 'price' });
+    if (statusVal) activeTags.push({ label: `Status: ${statusVal}`, value: 'status' });
+
+    if (activeTags.length > 0) {
+      filtersEl.classList.remove('hidden');
+      filtersEl.innerHTML = activeTags.map(tag => `
+        <span class="inline-flex items-center gap-1 px-3 py-1 bg-red-50 text-red-600 text-xs font-semibold rounded-full border border-red-100">
+          ${escapeHTML(tag.label)}
+          <button onclick="clearFilter('${tag.value}')" class="hover:text-red-800">&times;</button>
+        </span>
+      `).join('');
+    } else {
+      filtersEl.classList.add('hidden');
+    }
+
+    // Set page title
+    if (titleParts.length > 0) {
+      titleEl.textContent = 'Rooms for ' + titleParts.join(' • ');
+    } else {
+      titleEl.textContent = 'Available Rooms';
+    }
+
+    if (error) {
+      console.error('Supabase error:', error);
+      grid.innerHTML = `
+        <div class="col-span-full text-center py-16">
+          <div class="text-5xl mb-4"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+          <h3 class="font-display text-xl mb-2">Connection Error</h3>
+          <p class="text-gray-400">Could not load rooms. Please check your Supabase config in <code>js/supabase-config.js</code>.</p>
+        </div>
+      `;
+      return;
+    }
+
+    roomsMap = Object.fromEntries(displayedRooms.map(room => [room.id, room]));
+
+    if (!displayedRooms.length) {
+      grid.innerHTML = '';
+      empty.classList.remove('hidden');
+      if (resultsCount) resultsCount.textContent = '0 rooms found';
+    } else {
+      empty.classList.add('hidden');
+      grid.innerHTML = displayedRooms.map(r => renderRoomCard(r)).join('');
+      const warningText = availabilityWarning ? ' (availability dates could not be verified)' : '';
+      if (resultsCount) resultsCount.textContent = `Showing ${displayedRooms.length} room${displayedRooms.length > 1 ? 's' : ''}${warningText}`;
+    }
+  }
+
+  window.clearFilter = function(filterName) {
+    const selects = {
+      'city': document.getElementById('filter-city'),
+      'type': document.getElementById('filter-type'),
+      'price': document.getElementById('filter-price'),
+      'status': document.getElementById('filter-status')
+    };
+    if (selects[filterName]) {
+      selects[filterName].value = '';
+      loadRooms();
+    }
+  };
+
+  // Real-time subscription for room updates
+  supabase
+    .channel('rooms-changes')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'rooms' }, () => {
+      loadRooms(); // reload on any change
+    })
+    .subscribe();
+
+  // Filter event listeners
+  document.getElementById('filter-type').addEventListener('change', loadRooms);
+  document.getElementById('filter-city').addEventListener('change', loadRooms);
+  document.getElementById('filter-price').addEventListener('change', loadRooms);
+  document.getElementById('filter-status').addEventListener('change', loadRooms);
+  document.getElementById('btn-clear-filters').addEventListener('click', () => {
+    document.getElementById('filter-type').value = '';
+    document.getElementById('filter-city').value = '';
+    document.getElementById('filter-price').value = '';
+    document.getElementById('filter-status').value = '';
+    if (window.location.search) history.replaceState(null, '', 'rooms.html');
+    loadRooms();
+  });
+
+   // Pre-select city filter from URL param (e.g. rooms.html?city=Jaipur)
+   const urlCity = new URLSearchParams(window.location.search).get('city');
+   if (urlCity) {
+     const citySelect = document.getElementById('filter-city');
+     if (citySelect) citySelect.value = urlCity;
+   }
+
+   // Compare bar UI (compareList already declared above)
+   function updateCompareBar() {
+     const bar = document.getElementById('compare-bar');
+     const countEl = document.getElementById('compare-count');
+     countEl.textContent = compareList.length;
+     if (compareList.length >= 2) {
+       bar.classList.add('visible');
+     } else {
+       bar.classList.remove('visible');
+     }
+   }
+
+   window.toggleCompare = function(roomId, checkbox) {
+     const idx = compareList.indexOf(roomId);
+     if (idx === -1) {
+       if (compareList.length >= 3) {
+         showToast('You can compare up to 3 rooms', 'error');
+         checkbox.checked = false;
+         return;
+       }
+       compareList.push(roomId);
+     } else {
+       compareList.splice(idx, 1);
+     }
+     localStorage.setItem('brm_compare', JSON.stringify(compareList));
+     updateCompareBar();
+   };
+
+   window.clearCompare = function() {
+     compareList = [];
+     localStorage.removeItem('brm_compare');
+     updateCompareBar();
+     document.querySelectorAll('.compare-checkbox').forEach(cb => cb.checked = false);
+   };
+
+   window.handleSort = function() {
+     loadRooms();
+   };
+
+   window.openCompareModal = function() {
+     const modal = document.getElementById('compare-modal');
+     const content = document.getElementById('compare-content');
+     const roomsToCompare = compareList.map(id => roomsMap[id]).filter(Boolean);
+     
+     if (roomsToCompare.length < 2) {
+       showToast('Select at least 2 rooms to compare', 'error');
+       return;
+     }
+
+     const fields = [
+       { label: 'Room', key: 'name', type: 'text' },
+       { label: 'Type', key: 'type', type: 'text' },
+       { label: 'City', key: 'city', type: 'text' },
+       { label: 'Price/night', key: 'price', type: 'price' },
+       { label: 'Capacity', key: 'capacity', type: 'number' },
+       { label: 'Status', key: 'status', type: 'badge' },
+       { label: 'Amenities', key: 'amenities', type: 'list' },
+     ];
+
+     let html = '<div class="grid-cols-4 gap-4">';
+     html += '<div class="col-span-4 grid grid-cols-4 gap-4 mb-4 border-b pb-4">';
+     html += '<div class="font-bold text-gray-700">Feature</div>';
+     roomsToCompare.forEach(room => {
+       const img = escapeHTML((room.images && room.images[0]) || (defaultImages[room.type] || 'assets/images/room-standard.webp'));
+       html += `
+         <div class="text-center">
+           <img src="${img}" alt="${escapeHTML(room.name)}" class="w-full h-32 object-cover rounded-lg mb-2">
+           <div class="font-bold text-gray-900 text-sm">${escapeHTML(room.name)}</div>
+         </div>
+       `;
+     });
+     html += '</div>';
+
+     fields.forEach(field => {
+       html += '<div class="col-span-4 grid grid-cols-4 gap-4 border-b py-3 items-center">';
+       html += `<div class="font-semibold text-gray-600 text-sm">${field.label}</div>`;
+       roomsToCompare.forEach(room => {
+         let val = room[field.key];
+         if (field.key === 'price') val = formatCurrency(val);
+         if (field.key === 'amenities') val = (val || []).map(escapeHTML).join(', ');
+         if (field.key === 'status') {
+           const color = val === 'Available' ? 'text-green-600 bg-green-50' : 'text-red-600 bg-red-50';
+           val = `<span class="px-2 py-0.5 rounded-full text-xs font-semibold ${color}">${escapeHTML(val)}</span>`;
+         } else {
+           val = escapeHTML(val || '\u2014');
+         }
+         html += `<div class="text-center text-sm ${field.key === 'price' ? 'font-bold text-red-600' : 'text-gray-700'}">${val}</div>`;
+       });
+       html += '</div>';
+     });
+
+     html += '<div class="col-span-4 grid grid-cols-4 gap-4 py-3">';
+     html += '<div></div>';
+     roomsToCompare.forEach(room => {
+       html += `
+         <div class="text-center">
+           <a href="room-detail.html?id=${escapeHTML(room.id)}" class="btn-primary btn-sm inline-block">View Details</a>
+         </div>
+       `;
+     });
+     html += '</div>';
+     html += '</div>';
+     content.innerHTML = html;
+     modal.classList.add('active');
+   };
+
+   window.closeCompareModal = function() {
+     document.getElementById('compare-modal').classList.remove('active');
+   };
+
+   document.addEventListener('keydown', (e) => {
+     if (e.key === 'Escape') closeCompareModal();
+   });
+
+   updateCompareBar();
+
+   // Wishlist functionality
+   let wishlist = JSON.parse(localStorage.getItem('brm_wishlist') || '[]');
+
+   window.toggleWishlist = function(roomId, btn) {
+     const index = wishlist.indexOf(roomId);
+     const icon = btn.querySelector('svg');
+     if (index === -1) {
+       wishlist.push(roomId);
+       icon.classList.remove('text-gray-400');
+       icon.classList.add('text-red-500', 'fill-current');
+       btn.classList.add('border-red-300', 'bg-red-50');
+       showToast('Added to wishlist \u2764\uFE0F', 'success');
+     } else {
+       wishlist.splice(index, 1);
+       icon.classList.remove('text-red-500', 'fill-current');
+       icon.classList.add('text-gray-400');
+       btn.classList.remove('border-red-300', 'bg-red-50');
+       showToast('Removed from wishlist', 'info');
+     }
+     localStorage.setItem('brm_wishlist', JSON.stringify(wishlist));
+   };
+
+   window.isInWishlist = function(roomId) {
+     return wishlist.includes(roomId);
+   };
+
+   loadRooms();
+ </script>
+
+</body>
+</html>

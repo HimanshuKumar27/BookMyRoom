@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="BookMyRoom — Book budget to premium hotels across India. Best prices on rooms in Jaipur, Goa, Udaipur, Shimla & more.">
+  <title>BookMyRoom — Hotels & Rooms</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/favicon-192.png">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap" media="print" onload="this.media='all'">
+  <link rel="preload" href="css/tailwind.css?v=3" as="style">
+  <link rel="stylesheet" href="css/tailwind.css?v=3">
+</head>
+<body style="background:#fff;">
+
+<!-- Navbar -->
+<nav class="navbar" id="navbar"></nav>
+
+<!-- Hero -->
+<section class="hero relative flex items-center justify-center min-h-[550px] md:min-h-[650px] pt-24 pb-20 px-4" id="hero">
+  <div class="absolute inset-0 z-0 overflow-hidden">
+    <!-- Premium gradient overlay -->
+    <div class="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-transparent z-10"></div>
+    <div class="absolute inset-0 bg-gradient-to-r from-black/50 to-transparent z-10"></div>
+    <img src="assets/images/hero.webp" alt="Premium Hotel Background" class="w-full h-full object-cover transform scale-105 hover:scale-100 transition-transform duration-[10s] ease-out">
+  </div>
+  
+  <div class="relative z-20 w-full max-w-7xl mx-auto mt-8 md:mt-16">
+    <!-- Hero Text -->
+    <div class="text-center md:text-left mb-8 md:mb-12 animate-fade-in-up">
+      <h1 class="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white mb-4 md:mb-6 tracking-tight leading-tight font-display drop-shadow-lg">
+        Find the <span class="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-red-400">Perfect Stay</span> <br class="hidden md:block">Anywhere in India
+      </h1>
+      <p class="text-white/90 text-lg md:text-2xl max-w-2xl font-medium drop-shadow-md">
+        Book verified hotels at the best prices. From budget-friendly rooms to premium luxury stays.
+      </p>
+    </div>
+
+    <!-- OTA Search Console -->
+    <div class="bg-white rounded-3xl p-3 md:p-4 w-full shadow-[0_20px_50px_rgba(0,0,0,0.15)] md:shadow-[0_30px_60px_rgba(0,0,0,0.2)] flex flex-col md:flex-row items-stretch gap-2 md:gap-3 relative animate-fade-in-up delay-100 mx-auto border border-gray-100/50">
+      
+      <!-- Location -->
+      <div class="flex-1 w-full px-5 py-3.5 bg-gray-50 hover:bg-red-50/50 border border-transparent hover:border-red-100 rounded-2xl cursor-pointer transition-all group">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-red-100 text-red-600 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+          </div>
+          <div class="min-w-0 flex-1">
+            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-0.5 group-hover:text-red-500 transition-colors">City or Property</label>
+            <select id="hero-city" class="w-full bg-transparent border-0 p-0 text-xl md:text-2xl font-extrabold text-gray-900 focus:ring-0 cursor-pointer">
+              <option value="select" disabled selected>Select</option>
+              <option value="Darjeeling">Darjeeling</option>
+              <option value="Goa">Goa</option>
+              <option value="Jaipur">Jaipur</option>
+              <option value="Jaisalmer">Jaisalmer</option>
+              <option value="Jodhpur">Jodhpur</option>
+              <option value="Kochi">Kochi</option>
+              <option value="Manali">Manali</option>
+              <option value="Munnar">Munnar</option>
+              <option value="Mysore">Mysore</option>
+              <option value="Ooty">Ooty</option>
+              <option value="Rishikesh">Rishikesh</option>
+              <option value="Shimla">Shimla</option>
+              <option value="Udaipur">Udaipur</option>
+              <option value="Varanasi">Varanasi</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="hidden md:block w-px bg-gray-200 my-4"></div>
+
+      <!-- Check-in -->
+      <div class="flex-1 w-full px-5 py-3.5 bg-gray-50 hover:bg-red-50/50 border border-transparent hover:border-red-100 rounded-2xl cursor-pointer transition-all group">
+        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-0.5 group-hover:text-red-500 transition-colors">Check-In</label>
+        <div class="flex items-baseline gap-1 text-gray-900">
+          <input type="date" id="hero-checkin" class="w-full bg-transparent border-0 p-0 text-xl md:text-2xl font-extrabold text-red-600 focus:ring-0 cursor-pointer">
+        </div>
+      </div>
+
+      <div class="hidden md:block w-px bg-gray-200 my-4"></div>
+
+      <!-- Check-out -->
+      <div class="flex-1 w-full px-5 py-3.5 bg-gray-50 hover:bg-red-50/50 border border-transparent hover:border-red-100 rounded-2xl cursor-pointer transition-all group">
+        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-0.5 group-hover:text-red-500 transition-colors">Check-Out</label>
+        <div class="flex items-baseline gap-1 text-gray-900">
+          <input type="date" id="hero-checkout" class="w-full bg-transparent border-0 p-0 text-xl md:text-2xl font-extrabold text-gray-900 focus:ring-0 cursor-pointer">
+        </div>
+      </div>
+
+      <div class="hidden md:block w-px bg-gray-200 my-4"></div>
+
+      <!-- Guests & Rooms -->
+      <div class="flex-1 w-full px-5 py-3.5 bg-gray-50 hover:bg-red-50/50 border border-transparent hover:border-red-100 rounded-2xl cursor-pointer transition-all group relative" id="guest-selector-trigger">
+        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-0.5 group-hover:text-red-500 transition-colors">Rooms & Guests</label>
+        <div class="flex items-baseline gap-1 text-gray-900 truncate">
+          <span class="text-3xl font-extrabold" id="hero-rooms-count">1</span> <span class="font-bold text-lg">Room,</span> 
+          <span class="text-3xl font-extrabold ml-1" id="hero-guests-count">2</span> <span class="font-bold text-lg">Guests</span>
+        </div>
+        
+        <!-- Popover -->
+        <div class="hidden absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-xl border border-gray-100 p-5 z-50" id="guest-popover">
+          <div class="space-y-6">
+            <!-- Rooms -->
+            <div class="flex items-center justify-between">
+              <div>
+                <div class="font-semibold text-gray-900">Rooms</div>
+                <div class="text-sm text-gray-500">Add</div>
+              </div>
+              <div class="flex items-center gap-3">
+                <button type="button" onclick="updateGuests('rooms', -1)" class="w-10 h-10 rounded-full bg-gray-100 hover:bg-red-100 text-gray-600 hover:text-red-600 font-bold text-xl transition-colors">−</button>
+                <span class="w-8 text-center font-bold text-xl" id="rooms-val">1</span>
+                <button type="button" onclick="updateGuests('rooms', 1)" class="w-10 h-10 rounded-full bg-gray-100 hover:bg-red-100 text-gray-600 hover:text-red-600 font-bold text-xl transition-colors">+</button>
+              </div>
+            </div>
+            <!-- Guests -->
+            <div class="flex items-center justify-between">
+              <div>
+                <div class="font-semibold text-gray-900">Guests</div>
+                <div class="text-sm text-gray-500">Number of guests per room</div>
+              </div>
+              <div class="flex items-center gap-3">
+                <button type="button" onclick="updateGuests('guests', -1)" class="w-10 h-10 rounded-full bg-gray-100 hover:bg-red-100 text-gray-600 hover:text-red-600 font-bold text-xl transition-colors" id="guest-minus-btn">−</button>
+                <span class="w-8 text-center font-bold text-xl" id="guests-val">2</span>
+                <button type="button" onclick="updateGuests('guests', 1)" class="w-10 h-10 rounded-full bg-gray-100 hover:bg-red-100 text-gray-600 hover:text-red-600 font-bold text-xl transition-colors">+</button>
+              </div>
+            </div>
+            <button onclick="closeGuestPopover()" class="w-full py-2.5 bg-red-50 text-red-600 font-semibold rounded-xl hover:bg-red-100 transition-colors">Done</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Search Button -->
+      <div class="w-full md:w-auto mt-2 md:mt-0 flex">
+        <a href="#" id="hero-search-btn" class="w-full md:w-auto bg-gradient-to-br from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white font-extrabold text-2xl px-10 py-5 rounded-2xl shadow-[0_10px_20px_rgba(239,68,68,0.3)] hover:shadow-[0_15px_30px_rgba(239,68,68,0.4)] transform transition-all hover:-translate-y-1 flex items-center justify-center gap-2 uppercase tracking-wider h-full">
+          Search
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</section>
+
+<!-- Offers & Promos Section -->
+<section class="py-12 md:py-16 bg-gray-50 border-t border-gray-100">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between mb-8">
+      <h2 class="text-2xl md:text-3xl font-extrabold text-gray-900 tracking-tight">Exclusive Offers</h2>
+      <a href="#" class="text-red-600 font-bold hover:text-red-700 transition-colors flex items-center gap-1">View All <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+    </div>
+    
+    <div class="flex overflow-x-auto gap-5 pb-6 snap-x hide-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
+      
+      <!-- Live Bookings Counter (Urgency) -->
+      <div class="min-w-[320px] md:min-w-[380px] bg-gradient-to-br from-amber-50 to-orange-50 rounded-3xl shadow-md border border-amber-200 p-5 md:p-6 flex gap-4 md:gap-5 items-center snap-center transform transition-all duration-300 hover:-translate-y-1.5 cursor-pointer relative overflow-hidden group" id="live-bookings-banner">
+        <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+        <div class="w-16 h-16 md:w-20 md:h-20 bg-white rounded-2xl flex items-center justify-center flex-shrink-0 text-amber-600 shadow-inner relative z-10">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <div class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center animate-pulse">!</div>
+        </div>
+        <div class="relative z-10">
+          <div class="inline-block px-2.5 py-1 bg-amber-100 text-amber-700 text-[10px] font-bold uppercase tracking-wider rounded-lg mb-2">Live Urgency</div>
+          <h4 class="font-extrabold text-gray-900 text-lg md:text-xl leading-tight mb-1"><span id="today-bookings-count">0</span> Bookings Today</h4>
+          <p class="text-sm text-gray-500 font-medium">People booking rooms right now</p>
+        </div>
+      </div>
+      
+      <!-- Offer 1 -->
+      <div class="min-w-[320px] md:min-w-[380px] bg-white rounded-3xl shadow-sm hover:shadow-xl border border-gray-100 p-5 md:p-6 flex gap-4 md:gap-5 items-center snap-center transform transition-all duration-300 hover:-translate-y-1.5 cursor-pointer group">
+        <div class="w-16 h-16 md:w-20 md:h-20 bg-gradient-to-br from-red-50 to-red-100 rounded-2xl flex items-center justify-center flex-shrink-0 text-red-600 group-hover:scale-105 transition-transform shadow-inner">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+        </div>
+        <div>
+          <div class="inline-block px-2.5 py-1 bg-gray-100 text-gray-600 text-[10px] font-bold uppercase tracking-wider rounded-lg mb-2">New Users</div>
+          <h4 class="font-extrabold text-gray-900 text-lg md:text-xl leading-tight mb-1">Flat 20% OFF</h4>
+          <p class="text-sm text-gray-500 font-medium">Use code <strong class="text-red-600">WELCOME20</strong></p>
+        </div>
+      </div>
+      
+      <!-- Offer 2 -->
+      <div class="min-w-[320px] md:min-w-[380px] bg-white rounded-3xl shadow-sm hover:shadow-xl border border-gray-100 p-5 md:p-6 flex gap-4 md:gap-5 items-center snap-center transform transition-all duration-300 hover:-translate-y-1.5 cursor-pointer group">
+        <div class="w-16 h-16 md:w-20 md:h-20 bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl flex items-center justify-center flex-shrink-0 text-blue-600 group-hover:scale-105 transition-transform shadow-inner">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+        </div>
+        <div>
+          <div class="inline-block px-2.5 py-1 bg-gray-100 text-gray-600 text-[10px] font-bold uppercase tracking-wider rounded-lg mb-2">Flexible</div>
+          <h4 class="font-extrabold text-gray-900 text-lg md:text-xl leading-tight mb-1">Zero Cancellation</h4>
+          <p class="text-sm text-gray-500 font-medium">Free cancellation up to 24 hrs</p>
+        </div>
+      </div>
+
+      <!-- Offer 3 -->
+      <div class="min-w-[320px] md:min-w-[380px] bg-white rounded-3xl shadow-sm hover:shadow-xl border border-gray-100 p-5 md:p-6 flex gap-4 md:gap-5 items-center snap-center transform transition-all duration-300 hover:-translate-y-1.5 cursor-pointer group">
+        <div class="w-16 h-16 md:w-20 md:h-20 bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-2xl flex items-center justify-center flex-shrink-0 text-emerald-600 group-hover:scale-105 transition-transform shadow-inner">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+        </div>
+        <div>
+          <div class="inline-block px-2.5 py-1 bg-gray-100 text-gray-600 text-[10px] font-bold uppercase tracking-wider rounded-lg mb-2">Bank Offer</div>
+          <h4 class="font-extrabold text-gray-900 text-lg md:text-xl leading-tight mb-1">Earn Cashback</h4>
+          <p class="text-sm text-gray-500 font-medium">Up to ₹500 back on cards</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- Why BookMyRoom -->
+<section class="section" style="background:#fff;">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="label">Why BookMyRoom</span>
+      <h2>Simple Booking. Great Stays.</h2>
+      <p>We make finding and booking hotels across India easy, affordable, and hassle-free.</p>
+    </div>
+
+    <!-- CTA Phone Bar -->
+    <div class="mb-10 p-4 bg-gradient-to-r from-red-50 to-orange-50 rounded-2xl border border-red-100 flex flex-col md:flex-row items-center justify-between gap-4 reveal">
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-md text-red-600">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+        </div>
+        <div>
+          <div class="text-sm font-bold text-gray-500 uppercase tracking-wider">Need Help?</div>
+          <div class="text-xl font-extrabold text-gray-900">Call us 24/7 at +91 7011121740</div>
+        </div>
+      </div>
+      <a href="tel:+917011121740" class="btn-primary flex items-center gap-2 whitespace-nowrap">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+        Call Now
+      </a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div class="glass-card feature-card reveal animate-delay-1">
+        <div class="feature-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
+        <h3>Best Prices</h3>
+        <p>Get the lowest prices on hotels with our price match guarantee.</p>
+      </div>
+      <div class="glass-card feature-card reveal animate-delay-2">
+        <div class="feature-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+        <h3>Verified Hotels</h3>
+        <p>All properties are inspected and verified for quality and safety.</p>
+      </div>
+      <div class="glass-card feature-card reveal animate-delay-3">
+        <div class="feature-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+        <h3>Instant Booking</h3>
+        <p>Book in seconds with real-time availability and instant confirmation.</p>
+      </div>
+      <div class="glass-card feature-card reveal animate-delay-4">
+        <div class="feature-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <h3>Free Cancellation</h3>
+        <p>Cancel up to 24 hours before check-in at no extra charge.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Featured Rooms -->
+<section class="section" id="featured-rooms" style="background:var(--bg-light);">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="label">Popular Rooms</span>
+      <h2>Trending Hotels Near You</h2>
+      <p>Top-rated rooms picked by thousands of happy guests.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="featured-rooms-grid">
+
+      <!-- Room 1 -->
+      <div class="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden reveal animate-delay-1 border border-gray-100 group flex flex-col">
+        <div class="relative overflow-hidden aspect-[4/3]">
+          <img src="assets/images/room-deluxe.webp" alt="Deluxe AC Room, Jaipur" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+          <span class="absolute top-3 right-3 bg-green-500/90 text-white text-xs font-bold px-2 py-1 rounded-md backdrop-blur-sm shadow-sm">Available</span>
+        </div>
+        <div class="p-5 flex flex-col flex-grow">
+          <div class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Suite · Jaipur</div>
+          <h3 class="font-display font-bold text-xl text-gray-900 mb-2">Deluxe AC Suite</h3>
+          <div class="flex gap-2 text-xs text-gray-500 mb-4 flex-wrap">
+            <span class="bg-gray-100 px-2 py-1 rounded-md">WiFi</span>
+            <span class="bg-gray-100 px-2 py-1 rounded-md">AC</span>
+            <span class="bg-gray-100 px-2 py-1 rounded-md">Breakfast</span>
+            <span class="bg-gray-100 px-2 py-1 rounded-md">TV</span>
+          </div>
+            <div class="mt-auto flex items-end justify-between border-t border-gray-100 pt-4">
+              <div>
+                <div class="text-xs text-gray-400 line-through">₹2,299</div>
+                <div class="font-bold text-2xl text-red-600 leading-none">₹1,799<span class="text-sm font-normal text-gray-500">/night</span></div>
+                <div class="text-xs text-gray-400 mt-1">+ GST • No hidden charges</div>
+              </div>
+              <a href="rooms.html" class="bg-red-50 text-red-600 hover:bg-red-600 hover:text-white font-bold text-sm px-4 py-2 rounded-lg transition-colors">View Details</a>
+            </div>
+          </div>
+        </div>
+
+       <!-- Room 2 -->
+       <div class="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden reveal animate-delay-2 border border-gray-100 group flex flex-col">
+         <div class="relative overflow-hidden aspect-[4/3]">
+           <img src="assets/images/room-standard.webp" alt="Standard Room, Munnar" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+           <span class="absolute top-3 right-3 bg-green-500/90 text-white text-xs font-bold px-2 py-1 rounded-md backdrop-blur-sm shadow-sm">Available</span>
+         </div>
+         <div class="p-5 flex flex-col flex-grow">
+           <div class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Standard · Munnar</div>
+           <h3 class="font-display font-bold text-xl text-gray-900 mb-2">Standard Room</h3>
+           <div class="flex items-center gap-2 mb-2">
+             <div class="flex text-yellow-400 text-sm">★★★★☆</div>
+             <span class="text-xs text-gray-500">(4.2)</span>
+           </div>
+           <div class="flex gap-2 text-xs text-gray-500 mb-4 flex-wrap">
+             <span class="bg-gray-100 px-2 py-1 rounded-md">WiFi</span>
+             <span class="bg-gray-100 px-2 py-1 rounded-md">AC</span>
+             <span class="bg-gray-100 px-2 py-1 rounded-md">Garden View</span>
+           </div>
+           <div class="text-xs text-green-600 font-semibold mb-2 flex items-center gap-1">
+             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+             Free cancellation up to 24 hrs
+            </div>
+            <div class="mt-auto flex items-end justify-between border-t border-gray-100 pt-4">
+              <div>
+                <div class="text-xs text-gray-400 line-through">₹1,299</div>
+                <div class="font-bold text-2xl text-red-600 leading-none">₹899<span class="text-sm font-normal text-gray-500">/night</span></div>
+                <div class="text-xs text-gray-400 mt-1">+ GST • No hidden charges</div>
+              </div>
+              <a href="rooms.html" class="bg-red-50 text-red-600 hover:bg-red-600 hover:text-white font-bold text-sm px-4 py-2 rounded-lg transition-colors">View Details</a>
+            </div>
+         </div>
+       </div>
+
+       <!-- Room 3 -->
+       <div class="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden reveal animate-delay-3 border border-gray-100 group flex flex-col">
+         <div class="relative overflow-hidden aspect-[4/3]">
+           <img src="assets/images/room-premium.webp" alt="Premium Room, Goa" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+           <span class="absolute top-3 right-3 bg-green-500/90 text-white text-xs font-bold px-2 py-1 rounded-md backdrop-blur-sm shadow-sm">Available</span>
+         </div>
+         <div class="p-5 flex flex-col flex-grow">
+           <div class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Deluxe · Goa</div>
+           <h3 class="font-display font-bold text-xl text-gray-900 mb-2">Premium AC Room</h3>
+           <div class="flex items-center gap-2 mb-2">
+             <div class="flex text-yellow-400 text-sm">★★★★★</div>
+             <span class="text-xs text-gray-500">(4.9)</span>
+           </div>
+           <div class="flex gap-2 text-xs text-gray-500 mb-4 flex-wrap">
+             <span class="bg-gray-100 px-2 py-1 rounded-md">WiFi</span>
+             <span class="bg-gray-100 px-2 py-1 rounded-md">Pool</span>
+             <span class="bg-gray-100 px-2 py-1 rounded-md">Breakfast</span>
+             <span class="bg-gray-100 px-2 py-1 rounded-md">Parking</span>
+           </div>
+           <div class="text-xs text-green-600 font-semibold mb-2 flex items-center gap-1">
+             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+             Free cancellation up to 24 hrs
+           </div>
+           <div class="mt-auto flex items-end justify-between border-t border-gray-100 pt-4">
+             <div>
+               <div class="text-xs text-gray-400 line-through">₹2,299</div>
+               <div class="font-bold text-2xl text-red-600 leading-none">₹1,799<span class="text-sm font-normal text-gray-500">/night</span></div>
+               <div class="text-xs text-gray-400 mt-1">+ GST • No hidden charges</div>
+             </div>
+             <a href="rooms.html" class="bg-red-50 text-red-600 hover:bg-red-600 hover:text-white font-bold text-sm px-4 py-2 rounded-lg transition-colors">Book</a>
+           </div>
+         </div>
+       </div>
+
+    </div>
+
+    <div class="text-center mt-10 reveal">
+      <a href="rooms.html" class="btn-secondary">View All Rooms →</a>
+    </div>
+  </div>
+</section>
+
+<!-- Recently Viewed Rooms -->
+<section class="section" id="recently-viewed" style="background:var(--bg-light);display:none;">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="label">Continue Browsing</span>
+      <h2>Recently Viewed</h2>
+      <p>Pick up where you left off.</p>
+    </div>
+
+    <div class="flex overflow-x-auto gap-5 pb-6 snap-x hide-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0" id="recent-rooms-grid">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- Popular Cities -->
+<section class="section" style="background:#fff;">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="label">Top Cities</span>
+      <h2>Hotels in Popular Cities</h2>
+      <p>Find stays in India's most-visited destinations.</p>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+      <div class="bg-white rounded-2xl shadow-sm hover:shadow-md border border-gray-100 p-5 text-center reveal animate-delay-1 cursor-pointer hover:border-red-200 transition-all transform hover:-translate-y-1">
+        <div class="w-12 h-12 mx-auto bg-red-50 text-red-600 rounded-full flex items-center justify-center mb-3"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/><line x1="9" y1="9" x2="9" y2="9.01"/><line x1="9" y1="13" x2="9" y2="13.01"/><line x1="9" y1="17" x2="9" y2="17.01"/></svg></div>
+        <h4 class="font-display text-base font-bold text-gray-900 mb-0.5">Jaipur</h4>
+        <p class="text-xs text-gray-500 mb-2">Rajasthan</p>
+        <p class="text-red-600 text-sm font-bold bg-red-50 inline-block px-2 py-0.5 rounded">From ₹1,499</p>
+      </div>
+      <div class="bg-white rounded-2xl shadow-sm hover:shadow-md border border-gray-100 p-5 text-center reveal animate-delay-2 cursor-pointer hover:border-blue-200 transition-all transform hover:-translate-y-1">
+        <div class="w-12 h-12 mx-auto bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mb-3"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.553 2.105A1.75 1.75 0 0115.83 3.88L14 10"/><path d="M5 21c2-2 4-2 6 0s4 2 6 0 4-2 6 0"/><circle cx="14" cy="6" r="1"/><path d="M14 10c-2 3-6 5-9 6"/><path d="M14 10c1 2 3 4 5 5"/></svg></div>
+        <h4 class="font-display text-base font-bold text-gray-900 mb-0.5">Goa</h4>
+        <p class="text-xs text-gray-500 mb-2">Beach Stays</p>
+        <p class="text-red-600 text-sm font-bold bg-red-50 inline-block px-2 py-0.5 rounded">From ₹1,299</p>
+      </div>
+      <div class="bg-white rounded-2xl shadow-sm hover:shadow-md border border-gray-100 p-5 text-center reveal animate-delay-3 cursor-pointer hover:border-purple-200 transition-all transform hover:-translate-y-1">
+        <div class="w-12 h-12 mx-auto bg-purple-50 text-purple-600 rounded-full flex items-center justify-center mb-3"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+        <h4 class="font-display text-base font-bold text-gray-900 mb-0.5">Udaipur</h4>
+        <p class="text-xs text-gray-500 mb-2">Rajasthan</p>
+        <p class="text-red-600 text-sm font-bold bg-red-50 inline-block px-2 py-0.5 rounded">From ₹1,199</p>
+      </div>
+      <div class="bg-white rounded-2xl shadow-sm hover:shadow-md border border-gray-100 p-5 text-center reveal animate-delay-4 cursor-pointer hover:border-green-200 transition-all transform hover:-translate-y-1">
+        <div class="w-12 h-12 mx-auto bg-green-50 text-green-600 rounded-full flex items-center justify-center mb-3"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 019.8 6.9C15.5 4.9 17 3.5 17 3.5s1.5 3 .5 6.5c-1 3.6-4 5.4-6.5 6.5"/><path d="M11 20v-8"/></svg></div>
+        <h4 class="font-display text-base font-bold text-gray-900 mb-0.5">Munnar</h4>
+        <p class="text-xs text-gray-500 mb-2">Kerala</p>
+        <p class="text-red-600 text-sm font-bold bg-red-50 inline-block px-2 py-0.5 rounded">From ₹899</p>
+      </div>
+      <div class="bg-white rounded-2xl shadow-sm hover:shadow-md border border-gray-100 p-5 text-center reveal cursor-pointer hover:border-orange-200 transition-all transform hover:-translate-y-1">
+        <div class="w-12 h-12 mx-auto bg-orange-50 text-orange-600 rounded-full flex items-center justify-center mb-3"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3l4 8 5-5 5 15H2L8 3z"/></svg></div>
+        <h4 class="font-display text-base font-bold text-gray-900 mb-0.5">Shimla</h4>
+        <p class="text-xs text-gray-500 mb-2">Himachal</p>
+        <p class="text-red-600 text-sm font-bold bg-red-50 inline-block px-2 py-0.5 rounded">From ₹999</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials -->
+<section class="section" style="background:var(--bg-light);">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="label">Reviews</span>
+      <h2>Trusted by Thousands</h2>
+      <p>See what our guests have to say about their stays.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+      <div class="glass-card testimonial-card reveal animate-delay-1">
+        <div class="flex gap-1 text-yellow-400 text-sm mb-2">★★★★★</div>
+        <p class="testimonial-text">"Booked a room in Udaipur for ₹1,199 — no GST hassle, everything was transparent. Super clean, AC worked great, and breakfast was included. Will use BookMyRoom again!"</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">NS</div>
+          <div>
+            <div class="testimonial-name">Nandini Singh</div>
+            <div class="testimonial-location">Noida</div>
+          </div>
+        </div>
+      </div>
+      <div class="glass-card testimonial-card reveal animate-delay-2">
+        <div class="flex gap-1 text-yellow-400 text-sm mb-2">★★★★★</div>
+        <p class="testimonial-text">"Great hotel in Goa near the beach. The booking was instant, got confirmation on email. Staff was friendly and room was spotless."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">IS</div>
+          <div>
+            <div class="testimonial-name">Indramani Singh</div>
+            <div class="testimonial-location">Murshadpur</div>
+          </div>
+        </div>
+      </div>
+      <div class="glass-card testimonial-card reveal animate-delay-3">
+        <div class="flex gap-1 text-yellow-400 text-sm mb-2">★★★★☆</div>
+        <p class="testimonial-text">"Found a budget-friendly stay in Shimla with mountain views. Easy booking, no hassle, and the price was lower than other apps. Solid experience."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">AP</div>
+          <div>
+            <div class="testimonial-name">Ayush panchal</div>
+            <div class="testimonial-location">Banjarpur</div>
+          </div>
+        </div>
+      </div>
+      <div class="glass-card testimonial-card reveal animate-delay-1">
+        <div class="flex gap-1 text-yellow-400 text-sm mb-2">★★★★★</div>
+        <p class="testimonial-text">"The ₹899 room in Jaipur was a steal! Perfectly located near the Hawa Mahal. The staff was incredibly helpful with local travel tips. Definitely recommended for solo travelers."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">AS</div>
+          <div>
+            <div class="testimonial-name">Ankush Sharma</div>
+            <div class="testimonial-location">Greater Noida</div>
+          </div>
+        </div>
+      </div>
+      <div class="glass-card testimonial-card reveal animate-delay-2">
+        <div class="flex gap-1 text-yellow-400 text-sm mb-2">★★★★★</div>
+        <p class="testimonial-text">"Found a beautiful homestay in Kochi for just ₹1,299. The waterfront view was breathtaking. Seamless booking experience and the support team was very responsive."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">RY</div>
+          <div>
+            <div class="testimonial-name">Ranjeet Yadav</div>
+            <div class="testimonial-location">Punjab</div>
+          </div>
+        </div>
+      </div>
+      <div class="glass-card testimonial-card reveal animate-delay-3">
+        <div class="flex gap-1 text-yellow-400 text-sm mb-2">★★★★☆</div>
+        <p class="testimonial-text">"Stayed in a cozy cottage in Manali. The ₹1,599 price was very reasonable given the peak season. Clean linens, warm blankets, and a great mountain view."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">JKS</div>
+          <div>
+            <div class="testimonial-name">Jay Kumar Srivastava</div>
+            <div class="testimonial-location">Varanasi</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="section text-center" style="background:#fff;">
+  <div class="container reveal">
+    <div class="glass-card p-10 md:p-14" style="border: 2px solid #fee2e2;">
+      <h2 class="font-display text-2xl md:text-3xl mb-3">Ready to Book Your <span class="text-red-500">Next Stay</span>?</h2>
+      <p class="text-gray-500 mb-6 max-w-lg mx-auto">
+        Browse verified hotels across 50+ Indian cities. Best prices, instant booking, 24/7 support.
+      </p>
+      <div class="flex flex-wrap justify-center gap-3">
+        <a href="rooms.html" class="btn-primary">Browse Rooms</a>
+        <a href="register.html" class="btn-secondary">Create Free Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer" id="footer"></footer>
+
+<script type="module">
+  import { renderNavbar, renderFooter, initRevealAnimations, updateNavbarAuth, checkAdmin, getTodayISO, getTomorrowISO, getTodayBookingsCount } from './js/utils.js?v=2';
+  import { supabase } from './js/supabase-config.js';
+
+   renderNavbar('home');
+   renderFooter();
+   initRevealAnimations();
+
+   // Load today's bookings count for urgency
+   const countEl = document.getElementById('today-bookings-count');
+   if (countEl) {
+     const todayCount = await getTodayBookingsCount();
+     countEl.textContent = todayCount;
+     
+     // Update every 30 seconds for real-time feel
+     setInterval(async () => {
+       const newCount = await getTodayBookingsCount();
+       countEl.textContent = newCount;
+     }, 30000);
+   }
+
+    // Hero date picker defaults
+    const cityInput = document.getElementById('hero-city');
+    const checkinInput = document.getElementById('hero-checkin');
+    const checkoutInput = document.getElementById('hero-checkout');
+    const searchBtn = document.getElementById('hero-search-btn');
+    const guestTrigger = document.getElementById('guest-selector-trigger');
+    const guestPopover = document.getElementById('guest-popover');
+    const roomsVal = document.getElementById('rooms-val');
+    const guestsVal = document.getElementById('guests-val');
+    
+    let roomsCount = 1;
+    let guestsCount = 2;
+    
+    function updateGuests(type, delta) {
+      if (type === 'rooms') {
+        roomsCount = Math.max(1, Math.min(5, roomsCount + delta));
+        document.getElementById('hero-rooms-count').textContent = roomsCount;
+        if (roomsVal) roomsVal.textContent = roomsCount;
+      } else {
+        guestsCount = Math.max(1, Math.min(10, guestsCount + delta));
+        document.getElementById('hero-guests-count').textContent = guestsCount;
+        if (guestsVal) guestsVal.textContent = guestsCount;
+      }
+    }
+
+    function toggleGuestPopover() {
+      guestPopover.classList.toggle('hidden');
+    }
+
+    window.updateGuests = updateGuests;
+    window.closeGuestPopover = function() { guestPopover.classList.add('hidden'); };
+
+    if (guestTrigger && guestPopover) {
+      guestTrigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleGuestPopover();
+      });
+      
+      // Close popover on outside click
+      document.addEventListener('click', () => guestPopover.classList.add('hidden'));
+      guestPopover.addEventListener('click', e => e.stopPropagation());
+    }
+    
+    if (checkinInput && checkoutInput) {
+      // Set min dates
+      checkinInput.value = getTodayISO();
+      checkoutInput.value = getTomorrowISO();
+      checkinInput.min = getTodayISO();
+      checkoutInput.min = getTomorrowISO();
+      
+      // Update checkout min when checkin changes
+      checkinInput.addEventListener('change', () => {
+        const nextDay = new Date(checkinInput.value);
+        nextDay.setDate(nextDay.getDate() + 1);
+        checkoutInput.min = nextDay.toISOString().split('T')[0];
+        if (checkoutInput.value <= checkinInput.value) {
+          checkoutInput.value = nextDay.toISOString().split('T')[0];
+        }
+      });
+    }
+
+    // Search button - redirect to rooms with filters
+    if (searchBtn) {
+      searchBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const city = cityInput?.value || '';
+        const checkin = checkinInput.value || getTodayISO();
+        const checkout = checkoutInput.value || getTomorrowISO();
+        const params = new URLSearchParams();
+        if (city) params.set('city', city);
+        params.set('checkin', checkin);
+        params.set('checkout', checkout);
+        params.set('rooms', roomsCount);
+        params.set('guests', guestsCount);
+        window.location.href = `rooms.html?${params.toString()}`;
+      });
+    }
+
+   // Load recently viewed rooms
+   const recentSection = document.getElementById('recently-viewed');
+   const recentGrid = document.getElementById('recent-rooms-grid');
+   const recent = JSON.parse(localStorage.getItem('brm_recent') || '[]');
+   
+   if (recent && recent.length > 0) {
+     recentSection.style.display = 'block';
+      recentGrid.innerHTML = recent.map(room => `
+        <div class="min-w-[280px] md:min-w-[340px] bg-white rounded-2xl shadow-sm hover:shadow-xl border border-gray-100 p-4 snap-center cursor-pointer group transition-all duration-300 hover:-translate-y-1" onclick="window.location.href='room-detail.html?id=${room.id}'">
+          <div class="relative overflow-hidden aspect-[4/3] rounded-xl mb-3">
+            <img src="${room.image || 'assets/images/room-standard.webp'}" alt="${room.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+            <div class="absolute top-2 right-2 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-md shadow-sm">
+              <span class="flex text-yellow-400 text-xs">★</span>
+            </div>
+          </div>
+          <div class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">${room.type} · ${room.city}</div>
+          <h3 class="font-display font-bold text-lg text-gray-900 mb-2 truncate">${room.name}</h3>
+          <div class="flex items-baseline justify-between">
+            <div class="font-bold text-xl text-red-600">${new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(room.price)}<span class="text-xs font-normal text-gray-500">/night</span></div>
+            <button onclick="event.stopPropagation();" class="p-1.5 rounded-lg border border-gray-200 hover:border-red-300 hover:bg-red-50 transition-all">
+              <svg class="w-4 h-4 text-gray-400 hover:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+            </button>
+          </div>
+        </div>
+      `).join('');
+   }
+
+   // Check auth state
+   const { data: { user } } = await supabase.auth.getUser();
+   if (user) {
+     const isAdmin = await checkAdmin(user.id);
+     updateNavbarAuth(user, isAdmin);
+   }
+</script>
+
+</body>
+</html>

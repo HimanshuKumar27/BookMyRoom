@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="View and manage your hotel bookings on BookMyRoom. Track check-in dates, booking status, and more.">
+  <title>My Bookings — BookMyRoom</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/favicon-192.png">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap" media="print" onload="this.media='all'">
+  <link rel="preload" href="css/tailwind.css?v=3" as="style">
+  <link rel="stylesheet" href="css/tailwind.css?v=3">
+  <style>
+    /* My Bookings Page Styles */
+    .bookings-header {
+      padding: 100px 24px 40px;
+      background: var(--bg-white);
+    }
+    .bookings-header-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: flex; align-items: flex-end; justify-content: space-between;
+      flex-wrap: wrap; gap: 16px;
+    }
+    .greeting h1 {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 800; letter-spacing: -0.02em;
+      margin-bottom: 4px;
+    }
+    .greeting p {
+      color: var(--text-muted); font-size: 0.92rem;
+    }
+
+    /* Stats strip */
+    .booking-stats {
+      display: flex; gap: 20px; flex-wrap: wrap;
+    }
+    .booking-stat {
+      text-align: center; padding: 12px 20px;
+      background: var(--bg-light); border-radius: 12px;
+      min-width: 90px;
+    }
+    .booking-stat .num {
+      font-family: var(--font-heading);
+      font-size: 1.5rem; font-weight: 800;
+      color: var(--text-dark); letter-spacing: -0.02em;
+    }
+    .booking-stat .lbl {
+      font-size: 0.72rem; color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: 1px;
+      font-weight: 600; margin-top: 2px;
+    }
+
+    /* Filter tabs */
+    .filter-tabs {
+      display: flex; gap: 6px; padding: 4px;
+      background: var(--bg-light); border-radius: 10px;
+      width: fit-content; margin-bottom: 28px;
+    }
+    .filter-tab {
+      padding: 8px 18px; border: none; background: transparent;
+      color: var(--text-muted); font-family: var(--font-body);
+      font-weight: 600; font-size: 0.82rem; border-radius: 8px;
+      cursor: pointer; transition: all 0.2s ease;
+    }
+    .filter-tab.active {
+      background: #fff; color: var(--text-dark);
+      box-shadow: 0 2px 8px rgba(25,28,29,0.06);
+    }
+    .filter-tab:hover:not(.active) { color: var(--text-dark); }
+
+    /* Booking card */
+    .booking-card {
+      display: grid; grid-template-columns: 160px 1fr auto;
+      gap: 24px; align-items: stretch;
+      background: #fff; border-radius: var(--radius-xl);
+      box-shadow: var(--shadow); overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+      margin-bottom: 18px;
+    }
+    .booking-card:hover {
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-2px);
+    }
+    .booking-card-img {
+      width: 100%; height: 100%; min-height: 180px;
+      object-fit: cover;
+    }
+    .booking-card-body {
+      padding: 22px 4px 22px 0;
+      display: flex; flex-direction: column; justify-content: center;
+    }
+    .booking-card-actions {
+      padding: 22px 24px 22px 0;
+      display: flex; flex-direction: column;
+      align-items: flex-end; justify-content: center; gap: 10px;
+    }
+
+    .booking-id {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.72rem; color: var(--text-muted);
+      background: var(--bg-light); padding: 3px 10px;
+      border-radius: 6px; display: inline-block;
+      margin-bottom: 8px; letter-spacing: 0.5px;
+    }
+    .booking-room-name {
+      font-family: var(--font-heading);
+      font-size: 1.15rem; font-weight: 700;
+      color: var(--text-dark); margin-bottom: 4px;
+      letter-spacing: -0.01em;
+    }
+    .booking-location {
+      font-size: 0.82rem; color: var(--text-muted);
+      display: flex; align-items: center; gap: 4px;
+      margin-bottom: 12px;
+    }
+
+    .booking-details-grid {
+      display: grid; grid-template-columns: repeat(4, auto);
+      gap: 20px;
+    }
+    .booking-detail-item {
+      display: flex; flex-direction: column;
+    }
+    .booking-detail-item .detail-label {
+      font-size: 0.68rem; color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: 1px;
+      font-weight: 600; margin-bottom: 2px;
+    }
+    .booking-detail-item .detail-value {
+      font-size: 0.88rem; font-weight: 600;
+      color: var(--text-dark);
+    }
+
+    /* Status pill */
+    .status-pill {
+      padding: 5px 14px; border-radius: 50px;
+      font-size: 0.72rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 1px;
+      display: inline-flex; align-items: center; gap: 5px;
+    }
+    .status-confirmed {
+      background: rgba(0,104,96,0.1); color: #006860;
+    }
+    .status-cancelled {
+      background: rgba(183,16,42,0.1); color: #b7102a;
+    }
+    .status-pending {
+      background: rgba(202,138,4,0.1); color: #ca8a04;
+    }
+    .status-completed {
+      background: rgba(37,99,235,0.1); color: #2563eb;
+    }
+
+    /* Price tag */
+    .booking-price {
+      font-family: var(--font-heading);
+      font-size: 1.3rem; font-weight: 800;
+      color: var(--text-dark); letter-spacing: -0.02em;
+      text-align: right;
+    }
+    .booking-price .per-night {
+      font-size: 0.72rem; font-weight: 500;
+      color: var(--text-muted); display: block;
+    }
+
+    /* Cancel button */
+    .btn-cancel {
+      padding: 8px 18px; border: none;
+      background: transparent; color: var(--text-muted);
+      font-size: 0.8rem; font-weight: 600;
+      border-radius: 8px; cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .btn-cancel:hover {
+      background: #fef2f2; color: #b7102a;
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center; padding: 80px 24px;
+    }
+    .empty-icon {
+      width: 80px; height: 80px; border-radius: 50%;
+      background: var(--bg-light); display: flex;
+      align-items: center; justify-content: center;
+      margin: 0 auto 20px; font-size: 2rem;
+    }
+    .empty-state h2 {
+      font-size: 1.4rem; font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .empty-state p {
+      color: var(--text-muted); font-size: 0.92rem;
+      max-width: 400px; margin: 0 auto 24px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .booking-card {
+        grid-template-columns: 1fr;
+      }
+      .booking-card-img { min-height: 180px; max-height: 200px; }
+      .booking-card-body { padding: 0 20px; }
+      .booking-card-actions {
+        padding: 0 20px 20px;
+        flex-direction: row; align-items: center;
+        justify-content: space-between;
+      }
+      .booking-details-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+      }
+      .bookings-header-inner {
+        flex-direction: column; align-items: flex-start;
+      }
+      .booking-price { text-align: left; }
+    }
+
+    /* Cancel modal */
+    .cancel-modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.4);
+      backdrop-filter: blur(4px);
+      display: none; align-items: center; justify-content: center;
+      z-index: 2000; padding: 24px;
+    }
+    .cancel-modal-overlay.active { display: flex; }
+    .cancel-modal {
+      background: #fff; border-radius: var(--radius-xl);
+      padding: 32px; max-width: 400px; width: 100%;
+      box-shadow: var(--shadow-lg); text-align: center;
+    }
+    .cancel-modal h3 {
+      font-size: 1.2rem; font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .cancel-modal p {
+      color: var(--text-muted); font-size: 0.9rem;
+      margin-bottom: 24px;
+    }
+    .cancel-modal-actions {
+      display: flex; gap: 10px; justify-content: center;
+    }
+    .btn-confirm-cancel {
+      padding: 10px 24px; border: none;
+      background: #b7102a; color: #fff;
+      font-weight: 600; font-size: 0.88rem;
+      border-radius: 50px; cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .btn-confirm-cancel:hover {
+      background: #92001c;
+      box-shadow: 0 4px 16px rgba(183,16,42,0.25);
+    }
+    .btn-keep {
+      padding: 10px 24px; border: none;
+      background: var(--bg-light); color: var(--text-dark);
+      font-weight: 600; font-size: 0.88rem;
+      border-radius: 50px; cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .btn-keep:hover { background: var(--bg-surface-container); }
+  </style>
+</head>
+<body>
+
+<nav class="navbar" id="navbar"></nav>
+
+<!-- Header with greeting -->
+<header class="bookings-header">
+  <div class="bookings-header-inner">
+    <div class="greeting">
+      <h1 id="greeting-text">My Bookings</h1>
+      <p id="greeting-sub">Manage and track all your reservations</p>
+    </div>
+    <div class="booking-stats" id="booking-stats">
+      <!-- filled by JS -->
+    </div>
+  </div>
+</header>
+
+<!-- Main Content -->
+<section class="section" style="padding-top: 32px;">
+  <div class="container">
+
+    <!-- Filter Tabs -->
+    <div class="filter-tabs" id="filter-tabs">
+      <button class="filter-tab active" data-filter="all">All</button>
+      <button class="filter-tab" data-filter="Confirmed">Upcoming</button>
+      <button class="filter-tab" data-filter="Completed">Completed</button>
+      <button class="filter-tab" data-filter="Cancelled">Cancelled</button>
+    </div>
+
+    <!-- Bookings List -->
+    <div id="bookings-list">
+      <div class="text-center py-12">
+        <div class="spinner"></div>
+        <p style="color:var(--text-muted);font-size:0.88rem;margin-top:12px;">Loading your bookings...</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- Cancel Confirmation Modal -->
+<div class="cancel-modal-overlay" id="cancel-modal">
+  <div class="cancel-modal">
+    <div style="width:52px;height:52px;border-radius:50%;background:#fef2f2;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#b7102a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+    <h3>Cancel Booking?</h3>
+    <p>Are you sure you want to cancel this reservation? This action cannot be undone.</p>
+    <div class="cancel-modal-actions">
+      <button class="btn-keep" id="btn-keep">Keep Booking</button>
+      <button class="btn-confirm-cancel" id="btn-confirm-cancel">Yes, Cancel</button>
+    </div>
+  </div>
+</div>
+
+<footer class="footer" id="footer"></footer>
+
+<script type="module">
+  import { renderNavbar, renderFooter, updateNavbarAuth, formatCurrency, formatDate, showToast, checkAdmin } from './js/utils.js?v=2';
+  import { supabase } from './js/supabase-config.js';
+
+  renderNavbar('');
+  renderFooter();
+
+  // ── Auth check ──
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    window.location.href = 'login.html';
+    throw new Error('Not authenticated');
+  }
+  const isAdmin = await checkAdmin(user.id);
+  await updateNavbarAuth(user, isAdmin);
+
+  // ── Personalized greeting ──
+  const fullName = user.user_metadata?.full_name || user.email.split('@')[0];
+  const firstName = fullName.split(' ')[0];
+  const hour = new Date().getHours();
+  let timeGreeting = 'Good evening';
+  if (hour < 12) timeGreeting = 'Good morning';
+  else if (hour < 17) timeGreeting = 'Good afternoon';
+
+  document.getElementById('greeting-text').textContent = `${timeGreeting}, ${firstName}!`;
+  document.getElementById('greeting-sub').textContent = 'Here are your hotel reservations';
+
+  // ── Fetch bookings ──
+  const { data: bookings, error } = await supabase
+    .from('bookings')
+    .select('*, rooms(images)')
+    .eq('user_id', user.id)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching bookings:', error);
+    showToast('Failed to load bookings', 'error');
+  }
+
+  // Classify bookings
+  const today = new Date().toISOString().split('T')[0];
+  const enrichedBookings = (bookings || []).map(b => {
+    const checkOut = b.check_out;
+    if (b.status === 'Confirmed' && checkOut < today) {
+      b.displayStatus = 'Completed';
+    } else {
+      b.displayStatus = b.status || 'Confirmed';
+    }
+    return b;
+  });
+
+  // ── Stats ──
+  const totalBookings = enrichedBookings.length;
+  const upcoming = enrichedBookings.filter(b => b.displayStatus === 'Confirmed').length;
+  const completed = enrichedBookings.filter(b => b.displayStatus === 'Completed').length;
+  const totalSpent = enrichedBookings
+    .filter(b => b.displayStatus !== 'Cancelled')
+    .reduce((sum, b) => sum + (b.total_cost || 0), 0);
+
+  document.getElementById('booking-stats').innerHTML = `
+    <div class="booking-stat">
+      <div class="num">${totalBookings}</div>
+      <div class="lbl">Total</div>
+    </div>
+    <div class="booking-stat">
+      <div class="num">${upcoming}</div>
+      <div class="lbl">Upcoming</div>
+    </div>
+    <div class="booking-stat">
+      <div class="num">${completed}</div>
+      <div class="lbl">Completed</div>
+    </div>
+    <div class="booking-stat">
+      <div class="num">${formatCurrency(totalSpent)}</div>
+      <div class="lbl">Total Spent</div>
+    </div>
+  `;
+
+  // ── Render bookings ──
+  const listEl = document.getElementById('bookings-list');
+
+  function getStatusClass(status) {
+    switch(status) {
+      case 'Confirmed': return 'status-confirmed';
+      case 'Cancelled': return 'status-cancelled';
+      case 'Pending': return 'status-pending';
+      case 'Completed': return 'status-completed';
+      default: return 'status-confirmed';
+    }
+  }
+
+  function getStatusDot(status) {
+    switch(status) {
+      case 'Confirmed': return '●';
+      case 'Cancelled': return '●';
+      case 'Pending': return '◐';
+      case 'Completed': return '✓';
+      default: return '●';
+    }
+  }
+
+  function renderBookings(filter = 'all') {
+    const filtered = filter === 'all'
+      ? enrichedBookings
+      : enrichedBookings.filter(b => b.displayStatus === filter);
+
+    if (filtered.length === 0) {
+      listEl.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16"/><path d="M1 21h22"/><path d="M9 7h1"/><path d="M9 11h1"/><path d="M14 7h1"/><path d="M14 11h1"/><path d="M9 15h6v6H9z"/></svg></div>
+          <h2>${filter === 'all' ? 'No bookings yet' : `No ${filter.toLowerCase()} bookings`}</h2>
+          <p>${filter === 'all' 
+            ? 'Start exploring hotels across India and book your perfect stay.' 
+            : `You don't have any ${filter.toLowerCase()} bookings right now.`
+          }</p>
+          <a href="rooms.html" class="btn-primary">Browse Rooms →</a>
+        </div>
+      `;
+      return;
+    }
+
+    listEl.innerHTML = filtered.map(b => {
+      const roomImage = (b.rooms?.images && b.rooms.images.length > 0)
+        ? b.rooms.images[0]
+        : 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=300&h=200&fit=crop';
+
+      const checkInDate = formatDate(b.check_in);
+      const checkOutDate = formatDate(b.check_out);
+      const canCancel = b.displayStatus === 'Confirmed' && b.check_in >= today;
+
+      return `
+        <div class="booking-card" data-booking-id="${b.id}">
+          <img class="booking-card-img" src="${roomImage}" alt="${b.room_name || 'Hotel Room'}" loading="lazy">
+
+          <div class="booking-card-body">
+            <div class="booking-id">#${b.id.slice(0, 8).toUpperCase()}</div>
+            <div class="booking-room-name">${b.room_name || 'Hotel Room'}</div>
+            <div class="booking-location">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              ${b.room_city || 'India'} · ${b.room_type || 'Room'}
+            </div>
+
+            <div class="booking-details-grid">
+              <div class="booking-detail-item">
+                <span class="detail-label">Check-in</span>
+                <span class="detail-value">${checkInDate}</span>
+              </div>
+              <div class="booking-detail-item">
+                <span class="detail-label">Check-out</span>
+                <span class="detail-value">${checkOutDate}</span>
+              </div>
+              <div class="booking-detail-item">
+                <span class="detail-label">Duration</span>
+                <span class="detail-value">${b.nights} night${b.nights > 1 ? 's' : ''}</span>
+              </div>
+              <div class="booking-detail-item">
+                <span class="detail-label">Guests</span>
+                <span class="detail-value">${b.guests || 1} guest${(b.guests || 1) > 1 ? 's' : ''}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="booking-card-actions">
+            <span class="status-pill ${getStatusClass(b.displayStatus)}">
+              ${getStatusDot(b.displayStatus)} ${b.displayStatus}
+            </span>
+            <div class="booking-price">
+              ${formatCurrency(b.total_cost)}
+              <span class="per-night">${formatCurrency(b.price_per_night)}/night</span>
+              ${b.coupon_code ? `<span style="display:inline-block;font-size:0.65rem;color:#10b981;font-weight:600;background:#10b98118;padding:2px 8px;border-radius:10px;margin-top:4px;">${b.coupon_code} applied</span>` : ''}
+              ${b.gst_label ? `<span style="display:block;font-size:0.65rem;color:var(--text-muted);margin-top:2px;">${b.gst_label}</span>` : ''}
+            </div>
+            ${canCancel 
+              ? `<button class="btn-cancel" onclick="window.openCancelModal('${b.id}')">Cancel Booking</button>` 
+              : ''
+            }
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  renderBookings();
+
+  // ── Filter tabs ──
+  document.querySelectorAll('.filter-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      renderBookings(tab.dataset.filter);
+    });
+  });
+
+  // ── Cancel booking ──
+  let cancelBookingId = null;
+  const cancelModal = document.getElementById('cancel-modal');
+
+  window.openCancelModal = (bookingId) => {
+    cancelBookingId = bookingId;
+    cancelModal.classList.add('active');
+  };
+
+  document.getElementById('btn-keep').addEventListener('click', () => {
+    cancelModal.classList.remove('active');
+    cancelBookingId = null;
+  });
+
+  document.getElementById('btn-confirm-cancel').addEventListener('click', async () => {
+    if (!cancelBookingId) return;
+
+    const btn = document.getElementById('btn-confirm-cancel');
+    btn.textContent = 'Cancelling...';
+    btn.disabled = true;
+
+    const { error } = await supabase
+      .from('bookings')
+      .update({ status: 'Cancelled' })
+      .eq('id', cancelBookingId)
+      .eq('user_id', user.id);
+
+    if (error) {
+      showToast('Failed to cancel booking', 'error');
+      btn.textContent = 'Yes, Cancel';
+      btn.disabled = false;
+      return;
+    }
+
+    // Update local data
+    const booking = enrichedBookings.find(b => b.id === cancelBookingId);
+    if (booking) {
+      booking.status = 'Cancelled';
+      booking.displayStatus = 'Cancelled';
+    }
+
+    cancelModal.classList.remove('active');
+    cancelBookingId = null;
+    btn.textContent = 'Yes, Cancel';
+    btn.disabled = false;
+
+    // Re-render
+    const activeFilter = document.querySelector('.filter-tab.active').dataset.filter;
+    renderBookings(activeFilter);
+
+    // Update stats
+    const newUpcoming = enrichedBookings.filter(b => b.displayStatus === 'Confirmed').length;
+    const newCompleted = enrichedBookings.filter(b => b.displayStatus === 'Completed').length;
+    const newSpent = enrichedBookings
+      .filter(b => b.displayStatus !== 'Cancelled')
+      .reduce((sum, b) => sum + (b.total_cost || 0), 0);
+
+    document.getElementById('booking-stats').innerHTML = `
+      <div class="booking-stat">
+        <div class="num">${totalBookings}</div>
+        <div class="lbl">Total</div>
+      </div>
+      <div class="booking-stat">
+        <div class="num">${newUpcoming}</div>
+        <div class="lbl">Upcoming</div>
+      </div>
+      <div class="booking-stat">
+        <div class="num">${newCompleted}</div>
+        <div class="lbl">Completed</div>
+      </div>
+      <div class="booking-stat">
+        <div class="num">${formatCurrency(newSpent)}</div>
+        <div class="lbl">Total Spent</div>
+      </div>
+    `;
+
+    showToast('Booking cancelled successfully', 'success');
+  });
+
+  // Close modal on outside click
+  cancelModal.addEventListener('click', (e) => {
+    if (e.target === cancelModal) {
+      cancelModal.classList.remove('active');
+      cancelBookingId = null;
+    }
+  });
+</script>
+
+</body>
+</html>

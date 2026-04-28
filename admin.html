@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Admin Dashboard — Manage rooms and bookings for BookMyRoom.">
+  <title>Admin Dashboard — BookMyRoom</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/favicon-192.png">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap" media="print" onload="this.media='all'">
+  <link rel="preload" href="css/tailwind.css?v=3" as="style">
+  <link rel="stylesheet" href="css/tailwind.css?v=3">
+</head>
+<body>
+
+<nav class="navbar" id="navbar"></nav>
+
+<div class="admin-layout">
+  <section class="section" style="padding-top:32px;">
+    <div class="container">
+
+      <!-- Header -->
+      <div class="flex flex-wrap items-center justify-between gap-4 mb-8">
+        <div>
+          <h1 class="font-display text-2xl md:text-3xl">Admin <span style="color:var(--color-primary);">Dashboard</span></h1>
+          <p class="text-gray-400 text-sm mt-1">Manage rooms, bookings, and monitor activity.</p>
+        </div>
+        <div class="flex gap-3">
+          <button class="btn-primary btn-sm" id="btn-add-room">+ Add Room</button>
+          <button class="btn-secondary btn-sm" id="btn-seed-data"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-2px;margin-right:4px;"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg> Seed Sample Data</button>
+        </div>
+      </div>
+
+      <!-- stats -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8" id="stats-grid">
+        <div class="glass-card p-5 text-center" style="transform:none;">
+          <div class="text-2xl font-bold text-amber-400" id="stat-total-rooms">0</div>
+          <div class="text-xs text-gray-400 mt-1">Total Rooms</div>
+        </div>
+        <div class="glass-card p-5 text-center" style="transform:none;">
+          <div class="text-2xl font-bold text-green-400" id="stat-available">0</div>
+          <div class="text-xs text-gray-400 mt-1">Available</div>
+        </div>
+        <div class="glass-card p-5 text-center" style="transform:none;">
+          <div class="text-2xl font-bold text-red-400" id="stat-booked">0</div>
+          <div class="text-xs text-gray-400 mt-1">Booked</div>
+        </div>
+        <div class="glass-card p-5 text-center" style="transform:none;">
+          <div class="text-2xl font-bold text-blue-400" id="stat-bookings">0</div>
+          <div class="text-xs text-gray-400 mt-1">Total Bookings</div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="admin-tabs">
+        <button class="admin-tab active" data-tab="rooms"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-2px;margin-right:4px;"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16"/><path d="M1 21h22"/><path d="M9 7h1"/><path d="M9 11h1"/><path d="M14 7h1"/><path d="M14 11h1"/><path d="M9 15h6v6H9z"/></svg> Rooms</button>
+        <button class="admin-tab" data-tab="bookings"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-2px;margin-right:4px;"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg> Bookings</button>
+      </div>
+
+      <!-- Rooms Tab -->
+      <div id="tab-rooms">
+        <div class="glass-card overflow-x-auto" style="transform:none;">
+          <table class="data-table" id="rooms-table">
+            <thead>
+               <tr>
+                 <th>Room Name</th>
+                 <th>Type</th>
+                 <th>City</th>
+                 <th>Price/Night</th>
+                 <th>Rating</th>
+                 <th>Capacity</th>
+                 <th>Status</th>
+                 <th>Actions</th>
+               </tr>
+            </thead>
+            <tbody id="rooms-tbody">
+              <tr>
+                <td colspan="7" class="text-center py-8 text-gray-400">
+                  <div class="spinner" style="margin:8px auto;"></div>
+                  Loading rooms...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Bookings Tab -->
+      <div id="tab-bookings" class="hidden">
+        <div class="glass-card overflow-x-auto" style="transform:none;">
+          <table class="data-table" id="bookings-table">
+            <thead>
+              <tr>
+                <th>Guest</th>
+                <th>Room</th>
+                <th>City</th>
+                <th>Check-in</th>
+                <th>Check-out</th>
+                <th>Nights</th>
+                <th>Total</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="bookings-tbody">
+              <tr>
+                <td colspan="8" class="text-center py-8 text-gray-400">
+                  <div class="spinner" style="margin:8px auto;"></div>
+                  Loading bookings...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </section>
+</div>
+
+<!-- ===== Add/Edit Room Modal ===== -->
+<div class="modal-overlay" id="room-modal">
+  <div class="glass-card modal" style="position:relative;transform:none;">
+    <button class="modal-close" id="modal-close">&times;</button>
+    <h2 id="modal-title" class="font-display">Add New Room</h2>
+
+    <form id="room-form">
+      <input type="hidden" id="room-id">
+      <div class="form-group">
+        <label for="room-name">Room Name *</label>
+        <input type="text" id="room-name" class="form-control" placeholder="e.g. Royal Heritage Suite" required>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div class="form-group">
+          <label for="room-type">Room Type *</label>
+          <select id="room-type" class="form-control" required>
+            <option value="Single">Single</option>
+            <option value="Double">Double</option>
+            <option value="Suite">Suite</option>
+            <option value="Deluxe">Deluxe</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="room-city">City *</label>
+          <select id="room-city" class="form-control" required>
+            <option value="Jaipur">Jaipur</option>
+            <option value="Udaipur">Udaipur</option>
+            <option value="Goa">Goa</option>
+            <option value="Munnar">Munnar</option>
+            <option value="Shimla">Shimla</option>
+            <option value="Varanasi">Varanasi</option>
+            <option value="Jodhpur">Jodhpur</option>
+            <option value="Darjeeling">Darjeeling</option>
+            <option value="Rishikesh">Rishikesh</option>
+            <option value="Kochi">Kochi</option>
+          </select>
+        </div>
+      </div>
+       <div class="grid grid-cols-2 gap-4">
+         <div class="form-group">
+           <label for="room-price">Price per Night (₹) *</label>
+           <input type="number" id="room-price" class="form-control" placeholder="e.g. 4500" min="500" required>
+         </div>
+         <div class="form-group">
+           <label for="room-capacity">Capacity (guests) *</label>
+           <input type="number" id="room-capacity" class="form-control" placeholder="e.g. 2" min="1" max="10" required>
+         </div>
+         <div class="form-group">
+           <label for="room-rating">Rating (0-5)</label>
+           <input type="number" id="room-rating" class="form-control" placeholder="4.5" min="0" max="5" step="0.1">
+         </div>
+         <div class="form-group">
+           <label for="room-review-count">Review Count</label>
+           <input type="number" id="room-review-count" class="form-control" placeholder="e.g. 128" min="0">
+         </div>
+       </div>
+      <div class="form-group">
+        <label for="room-status">Status</label>
+        <select id="room-status" class="form-control">
+          <option value="Available">Available</option>
+          <option value="Booked">Booked</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="room-amenities">Amenities (comma-separated)</label>
+        <input type="text" id="room-amenities" class="form-control" placeholder="e.g. WiFi, Pool, Breakfast">
+      </div>
+      <div class="form-group">
+        <label for="room-description">Description</label>
+        <textarea id="room-description" class="form-control" rows="3" placeholder="Describe this room..."></textarea>
+      </div>
+      <div class="form-group">
+        <label for="room-images">Image URLs (comma-separated, optional)</label>
+        <input type="text" id="room-images" class="form-control" placeholder="https://... , https://...">
+      </div>
+      <button type="submit" class="btn-primary mt-4" style="width:100%;" id="btn-save-room">Save Room</button>
+    </form>
+  </div>
+</div>
+
+<footer class="footer" id="footer"></footer>
+
+<div id="form-errors"></div>
+
+<script type="module">
+  import { renderNavbar, renderFooter, updateNavbarAuth, formatCurrency, formatDate, showToast, checkAdmin } from './js/utils.js';
+  import { supabase } from './js/supabase-config.js';
+  import { rateLimiters, validateForm, sanitize, isValidPrice, isValidPositiveInt, isValidText, showFormErrors } from './js/security.js';
+
+  renderNavbar('');
+  renderFooter();
+
+  // ===== Auth guard (admin only) =====
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    showToast('Please login as admin.', 'error');
+    sessionStorage.setItem('authRedirect', window.location.href);
+    setTimeout(() => window.location.href = 'login.html', 1200);
+  } else {
+    const isAdmin = await checkAdmin(user.id);
+    updateNavbarAuth(user, isAdmin);
+    if (!isAdmin) {
+      showToast('Access denied. Admin privileges required.', 'error');
+      setTimeout(() => window.location.href = 'index.html', 1500);
+    } else {
+      // Admin verified — load data
+      loadRooms();
+      loadBookings();
+    }
+  }
+
+  // ===== Tabs =====
+  document.querySelectorAll('.admin-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const target = tab.dataset.tab;
+      document.getElementById('tab-rooms').classList.toggle('hidden', target !== 'rooms');
+      document.getElementById('tab-bookings').classList.toggle('hidden', target !== 'bookings');
+    });
+  });
+
+  // ===== Room Modal =====
+  const modal = document.getElementById('room-modal');
+  const modalTitle = document.getElementById('modal-title');
+  const roomForm = document.getElementById('room-form');
+
+  document.getElementById('btn-add-room').addEventListener('click', () => {
+    modalTitle.textContent = 'Add New Room';
+    roomForm.reset();
+    document.getElementById('room-id').value = '';
+    showFormErrors([], 'form-errors');
+    modal.classList.add('active');
+  });
+
+   document.getElementById('modal-close').addEventListener('click', () => modal.classList.remove('active'));
+   modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('active'); });
+   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') modal.classList.remove('active'); });
+
+  // ===== Save Room (with validation & rate limiting) =====
+  roomForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const rateCheck = rateLimiters.adminAction.check();
+    if (!rateCheck.allowed) { showToast('Too many actions. Please slow down.', 'error'); return; }
+
+    const roomId = document.getElementById('room-id').value;
+    const roomName = sanitize(document.getElementById('room-name').value);
+    const roomPrice = document.getElementById('room-price').value;
+    const roomCapacity = document.getElementById('room-capacity').value;
+    const roomDescription = sanitize(document.getElementById('room-description').value);
+    const amenitiesStr = sanitize(document.getElementById('room-amenities').value);
+    const imagesStr = document.getElementById('room-images').value;
+
+    const validation = validateForm({ 'Room Name': { value: roomName, rules: ['required'] } });
+    if (!isValidText(roomName, 2, 100)) { validation.errors.push('Room name must be 2–100 characters.'); validation.valid = false; }
+    if (!isValidPrice(roomPrice)) { validation.errors.push('Price must be between ₹500 and ₹1,00,000 per night.'); validation.valid = false; }
+    if (!isValidPositiveInt(roomCapacity, 1, 10)) { validation.errors.push('Capacity must be between 1 and 10 guests.'); validation.valid = false; }
+
+    if (!validation.valid) { showFormErrors(validation.errors, 'form-errors'); return; }
+    showFormErrors([], 'form-errors');
+
+    const btn = document.getElementById('btn-save-room');
+    btn.disabled = true;
+    btn.textContent = 'Saving...';
+
+     const data = {
+       name: roomName,
+       type: document.getElementById('room-type').value,
+       city: document.getElementById('room-city').value,
+       price: parseInt(roomPrice),
+       capacity: parseInt(roomCapacity),
+       status: document.getElementById('room-status').value,
+       rating: parseFloat(document.getElementById('room-rating').value) || 4.5,
+       review_count: parseInt(document.getElementById('room-review-count').value) || Math.floor(10 + Math.random() * 50),
+       amenities: amenitiesStr ? amenitiesStr.split(',').map(s => sanitize(s.trim())).filter(Boolean) : [],
+       description: roomDescription,
+       images: imagesStr ? imagesStr.split(',').map(s => s.trim()).filter(Boolean) : []
+     };
+
+    try {
+      if (roomId) {
+        const { error } = await supabase.from('rooms').update(data).eq('id', roomId);
+        if (error) throw error;
+        showToast('Room updated successfully!', 'success');
+      } else {
+        const { error } = await supabase.from('rooms').insert(data);
+        if (error) throw error;
+        showToast('Room added successfully!', 'success');
+      }
+      modal.classList.remove('active');
+      loadRooms(); // refresh data
+    } catch (err) {
+      console.error(err);
+      showToast('Error saving room.', 'error');
+    }
+
+    btn.disabled = false;
+    btn.textContent = 'Save Room';
+  });
+
+  // ===== Load Rooms =====
+  async function loadRooms() {
+    const tbody = document.getElementById('rooms-tbody');
+    const { data: rooms, error } = await supabase.from('rooms').select('*').order('created_at', { ascending: false });
+
+    if (error) { console.error(error); return; }
+
+    document.getElementById('stat-total-rooms').textContent = rooms.length;
+    document.getElementById('stat-available').textContent = rooms.filter(r => r.status === 'Available').length;
+    document.getElementById('stat-booked').textContent = rooms.filter(r => r.status === 'Booked').length;
+
+    if (rooms.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="7" class="text-center py-8 text-gray-400">No rooms found. Click "Add Room" to create one.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = rooms.map(r => {
+      const statusClass = r.status === 'Available' ? 'status-confirmed' : 'status-cancelled';
+      return `
+        <tr>
+          <td class="font-semibold">${sanitize(r.name)}</td>
+          <td>${sanitize(r.type)}</td>
+          <td>${sanitize(r.city || '—')}</td>
+          <td>${formatCurrency(r.price)}</td>
+          <td>${r.capacity || 2}</td>
+          <td><span class="status-badge ${statusClass}">${r.status}</span></td>
+          <td>
+            <div class="actions">
+              <button class="btn-primary btn-sm" onclick="editRoom('${r.id}')">Edit</button>
+              <button class="btn-danger btn-sm" onclick="removeRoom('${r.id}', '${sanitize(r.name)}')">Delete</button>
+              <button class="btn-secondary btn-sm" onclick="toggleStatus('${r.id}', '${r.status}')">${r.status === 'Available' ? 'Mark Booked' : 'Mark Available'}</button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  // ===== Load Bookings =====
+  async function loadBookings() {
+    const tbody = document.getElementById('bookings-tbody');
+    const { data: bookings, error } = await supabase.from('bookings').select('*').order('created_at', { ascending: false });
+
+    if (error) { console.error(error); return; }
+
+    document.getElementById('stat-bookings').textContent = bookings.length;
+
+    if (bookings.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="8" class="text-center py-8 text-gray-400">No bookings yet.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = bookings.map(b => {
+      const statusClass = b.status === 'Confirmed' ? 'status-confirmed' : b.status === 'Cancelled' ? 'status-cancelled' : 'status-pending';
+      return `
+        <tr>
+          <td>
+            <div class="font-semibold">${sanitize(b.guest_name || '—')}</div>
+            <div class="text-xs text-gray-500">${sanitize(b.email || '')}</div>
+          </td>
+          <td>${sanitize(b.room_name || '—')}</td>
+          <td>${sanitize(b.room_city || '—')}</td>
+          <td>${formatDate(b.check_in)}</td>
+          <td>${formatDate(b.check_out)}</td>
+          <td>${b.nights || '—'}</td>
+          <td class="font-semibold">${formatCurrency(b.total_cost || 0)}</td>
+          <td><span class="status-badge ${statusClass}">${b.status || 'Pending'}</span></td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  // ===== Real-time subscriptions =====
+  supabase
+    .channel('admin-rooms')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'rooms' }, () => loadRooms())
+    .subscribe();
+
+  supabase
+    .channel('admin-bookings')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'bookings' }, () => loadBookings())
+    .subscribe();
+
+  // ===== Global action handlers (with rate limiting) =====
+  window.editRoom = async function(id) {
+    const rateCheck = rateLimiters.adminAction.check();
+    if (!rateCheck.allowed) { showToast('Too many actions. Please slow down.', 'error'); return; }
+
+    const { data: r, error } = await supabase.from('rooms').select('*').eq('id', id).single();
+    if (error || !r) { showToast('Error loading room.', 'error'); return; }
+
+    document.getElementById('room-id').value = id;
+    document.getElementById('room-name').value = r.name || '';
+    document.getElementById('room-type').value = r.type || 'Single';
+    document.getElementById('room-city').value = r.city || 'Jaipur';
+    document.getElementById('room-price').value = r.price || '';
+    document.getElementById('room-capacity').value = r.capacity || 2;
+    document.getElementById('room-status').value = r.status || 'Available';
+    document.getElementById('room-amenities').value = (r.amenities || []).join(', ');
+    document.getElementById('room-description').value = r.description || '';
+     document.getElementById('room-images').value = (r.images || []).join(', ');
+     document.getElementById('room-rating').value = r.rating || 4.5;
+     document.getElementById('room-review-count').value = r.review_count || Math.floor(10 + Math.random() * 50);
+
+    modalTitle.textContent = 'Edit Room';
+    showFormErrors([], 'form-errors');
+    modal.classList.add('active');
+  };
+
+  window.removeRoom = async function(id, name) {
+    const rateCheck = rateLimiters.adminAction.check();
+    if (!rateCheck.allowed) { showToast('Too many actions. Please slow down.', 'error'); return; }
+
+    if (!confirm(`Delete room "${name}"? This cannot be undone.`)) return;
+    const { error } = await supabase.from('rooms').delete().eq('id', id);
+    if (error) { showToast('Error deleting room.', 'error'); } else { showToast('Room deleted.', 'success'); }
+  };
+
+  window.toggleStatus = async function(id, currentStatus) {
+    const rateCheck = rateLimiters.adminAction.check();
+    if (!rateCheck.allowed) { showToast('Too many actions. Please slow down.', 'error'); return; }
+
+    const newStatus = currentStatus === 'Available' ? 'Booked' : 'Available';
+    const { error } = await supabase.from('rooms').update({ status: newStatus }).eq('id', id);
+    if (error) { showToast('Error updating status.', 'error'); } else { showToast(`Room marked as ${newStatus}.`, 'success'); }
+  };
+
+  // ===== Seed Sample Data (rate limited: 2/hour) =====
+  document.getElementById('btn-seed-data').addEventListener('click', async () => {
+    const rateCheck = rateLimiters.seedData.check();
+    if (!rateCheck.allowed) {
+      const waitMin = Math.ceil(rateLimiters.seedData.getRemainingTime() / 60);
+      showToast(`Seed data is rate limited. Try again in ${waitMin} minutes.`, 'error');
+      return;
+    }
+
+    if (!confirm('This will add 8 sample Indian hotel rooms. Continue?')) return;
+
+     const sampleRooms = [
+       { name: 'Budget AC Room', type: 'Single', city: 'Varanasi', price: 899, capacity: 2, status: 'Available', rating: 4.2, review_count: 47, amenities: ['WiFi', 'AC', 'TV', 'Breakfast'], description: 'Affordable AC room in the city center near the ghats. Clean rooms with daily housekeeping.', images: [] },
+       { name: 'Standard Room', type: 'Single', city: 'Darjeeling', price: 999, capacity: 2, status: 'Available', rating: 4.5, review_count: 89, amenities: ['WiFi', 'Heater', 'Garden', 'Mountain View'], description: 'Cozy room with mountain views & morning tea included.', images: [] },
+       { name: 'Standard AC Room', type: 'Single', city: 'Munnar', price: 1299, capacity: 2, status: 'Available', rating: 4.3, review_count: 56, amenities: ['WiFi', 'AC', 'Garden View', 'Parking'], description: 'Clean and cozy standard room with garden view. Located near the main market.', images: [] },
+       { name: 'Mountain View Room', type: 'Double', city: 'Shimla', price: 1599, capacity: 3, status: 'Available', rating: 4.7, review_count: 124, amenities: ['WiFi', 'Heater', 'Mountain View', 'Parking'], description: 'Comfortable double room with Himalayan views. Room heater, hot water, free parking.', images: [] },
+       { name: 'Lake View Room', type: 'Deluxe', city: 'Udaipur', price: 2199, capacity: 2, status: 'Available', rating: 4.8, review_count: 203, amenities: ['WiFi', 'AC', 'Lake View', 'Room Service'], description: 'Comfortable deluxe room with a beautiful view of the lake. AC, hot water, and 24/7 room service.', images: [] },
+       { name: 'Beach View Room', type: 'Deluxe', city: 'Goa', price: 2499, capacity: 3, status: 'Available', rating: 4.9, review_count: 317, amenities: ['WiFi', 'AC', 'Beach Access', 'Pool', 'Breakfast'], description: 'Well-maintained room near Calangute beach. Pool access, complimentary breakfast.', images: [] },
+       { name: 'Heritage Room', type: 'Suite', city: 'Jodhpur', price: 2999, capacity: 4, status: 'Available', rating: 4.6, review_count: 178, amenities: ['WiFi', 'AC', 'Pool', 'All Meals', 'Spa'], description: 'Heritage suite with modern amenities near Mehrangarh Fort. All meals included.', images: [] },
+       { name: 'Royal Suite', type: 'Suite', city: 'Jaipur', price: 4499, capacity: 4, status: 'Available', rating: 4.9, review_count: 256, amenities: ['WiFi', 'AC', 'Pool', 'Breakfast', 'Parking', 'Spa'], description: 'Spacious AC suite near Hawa Mahal with city view. Complimentary breakfast & spa access.', images: [] }
+     ];
+
+    const btn = document.getElementById('btn-seed-data');
+    btn.disabled = true;
+    btn.textContent = 'Seeding...';
+
+    const { error } = await supabase.from('rooms').insert(sampleRooms);
+
+    if (error) {
+      console.error(error);
+      showToast('Error seeding data.', 'error');
+    } else {
+      showToast('8 sample rooms added!', 'success');
+    }
+
+    btn.disabled = false;
+    btn.textContent = 'Seed Sample Data';
+  });
+</script>
+</body>
+</html>

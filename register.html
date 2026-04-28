@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Create your BookMyRoom account and start booking hotels across India.">
+  <title>Sign Up — BookMyRoom</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/favicon-192.png">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap" media="print" onload="this.media='all'">
+  <link rel="preload" href="css/tailwind.css?v=3" as="style">
+  <link rel="stylesheet" href="css/tailwind.css?v=3">
+</head>
+<body>
+
+<nav class="navbar" id="navbar"></nav>
+
+<div class="auth-container">
+  <div class="glass-card auth-card">
+    <div class="text-center mb-2">
+      <img src="assets/apple-touch-icon.png" alt="Book My Room Icon" width="48" height="48" style="display:inline-block;border-radius:10px;">
+    </div>
+    <h1>Create Account</h1>
+    <p class="subtitle">Join BookMyRoom — it's free and takes 30 seconds</p>
+
+    <form id="register-form">
+      <div class="form-group">
+        <label for="fullname">Full Name</label>
+        <input type="text" id="fullname" class="form-control" placeholder="Enter your full name" required>
+      </div>
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" class="form-control" placeholder="Enter your email" required>
+      </div>
+      <div class="form-group">
+        <label for="phone">Phone Number</label>
+        <input type="tel" id="phone" class="form-control" placeholder="Enter your phone number" required>
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div style="position:relative;">
+          <input type="password" id="password" class="form-control" placeholder="Enter your password" required minlength="6" style="padding-right:44px;">
+          <button type="button" class="password-toggle" onclick="togglePassword('password', this)" aria-label="Toggle password visibility" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#9ca3af;padding:4px;display:flex;align-items:center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="confirm-password">Confirm Password</label>
+        <div style="position:relative;">
+          <input type="password" id="confirm-password" class="form-control" placeholder="Confirm your password" required style="padding-right:44px;">
+          <button type="button" class="password-toggle" onclick="togglePassword('confirm-password', this)" aria-label="Toggle password visibility" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#9ca3af;padding:4px;display:flex;align-items:center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+        </div>
+      </div>
+      <div class="flex items-start gap-2 mb-6">
+        <input type="checkbox" id="terms" required style="accent-color:var(--color-primary);margin-top:4px;">
+        <label for="terms" class="text-sm text-gray-400">
+          I agree to the <a href="#" style="color:var(--color-primary);">Terms of Service</a> and 
+          <a href="#" style="color:var(--color-primary);">Privacy Policy</a>
+        </label>
+      </div>
+      <button type="submit" class="btn-primary w-full" id="btn-register" style="width:100%;">
+        Create Account
+      </button>
+    </form>
+
+    <div id="register-error" class="mt-4 text-center text-sm hidden" style="color:#f87171;"></div>
+
+    <p class="auth-footer">
+      Already have an account? <a href="login.html">Sign in →</a>
+    </p>
+  </div>
+</div>
+
+<div id="form-errors"></div>
+
+<script>
+  function togglePassword(fieldId, btn) {
+    const input = document.getElementById(fieldId);
+    if (input.type === 'password') {
+      input.type = 'text';
+      btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
+    } else {
+      input.type = 'password';
+      btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+    }
+  }
+</script>
+
+<script type="module">
+  import { renderNavbar, showToast } from './js/utils.js?v=2';
+  import { supabase } from './js/supabase-config.js';
+  import { rateLimiters, validateForm, sanitize, showFormErrors } from './js/security.js';
+
+  renderNavbar('');
+
+  const form = document.getElementById('register-form');
+  const errorDiv = document.getElementById('register-error');
+  const btnRegister = document.getElementById('btn-register');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const fullname = sanitize(document.getElementById('fullname').value);
+    const email = sanitize(document.getElementById('email').value);
+    const phone = sanitize(document.getElementById('phone').value);
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirm-password').value;
+
+    // --- Input Validation ---
+    const validation = validateForm({
+      'Full Name': { value: fullname, rules: ['required', 'name'] },
+      'Email': { value: email, rules: ['required', 'email'] },
+      'Phone': { value: phone, rules: ['required', 'phone'] },
+      'Password': { value: password, rules: ['required', 'password'] }
+    });
+
+    if (password !== confirmPassword) {
+      validation.errors.push('Passwords do not match.');
+      validation.valid = false;
+    }
+
+    if (!validation.valid) {
+      showFormErrors(validation.errors, 'form-errors');
+      return;
+    }
+    showFormErrors([], 'form-errors');
+
+    // --- Rate Limiting ---
+    const rateCheck = rateLimiters.register.check();
+    if (!rateCheck.allowed) {
+      const waitSec = rateLimiters.register.getRemainingTime();
+      errorDiv.textContent = `Too many registration attempts. Please try again in ${Math.ceil(waitSec / 60)} minutes.`;
+      errorDiv.classList.remove('hidden');
+      return;
+    }
+
+    btnRegister.disabled = true;
+    btnRegister.textContent = 'Creating Account...';
+    errorDiv.classList.add('hidden');
+
+    try {
+      // Sign up with Supabase Auth — the DB trigger auto-creates the profile
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: { full_name: fullname, phone: phone } // trigger reads these to create profile
+        }
+      });
+
+      if (authError) throw authError;
+
+      rateLimiters.register.reset();
+      showToast('Account created! Welcome to BookMyRoom', 'success');
+      setTimeout(() => { window.location.href = 'index.html'; }, 1200);
+    } catch (error) {
+      let msg = 'Registration failed. Please try again.';
+      if (error.message?.includes('already registered')) msg = 'An account with this email already exists.';
+      else if (error.message?.includes('password')) msg = 'Password is too weak. Use at least 6 characters.';
+      else if (error.message) msg = error.message;
+      errorDiv.textContent = msg;
+      errorDiv.classList.remove('hidden');
+      btnRegister.disabled = false;
+      btnRegister.textContent = 'Create Account';
+    }
+  });
+</script>
+
+</body>
+</html>

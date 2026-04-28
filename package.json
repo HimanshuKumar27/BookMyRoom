@@ -1,0 +1,20 @@
+{
+  "name": "BookMyRoom",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build:css": "tailwindcss -i css/input.css -o css/tailwind.css --minify",
+    "dev:css": "tailwindcss -i css/input.css -o css/tailwind.css --watch",
+    "check:js": "node --check js/email.js && node --check js/env.example.js && node --check js/env.js && node --check js/security.js && node --check js/supabase-config.js && node --check js/utils.js",
+    "check": "npm run build:css && npm run check:js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.2.2",
+    "tailwindcss": "^4.2.2"
+  }
+}

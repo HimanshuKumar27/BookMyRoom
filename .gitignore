@@ -1,0 +1,24 @@
+﻿# Environment variables
+# Keep the local generated browser config out of source control.
+.env
+.env.local
+.env.*.local
+js/env.js
+
+# Dependencies
+node_modules/
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Logs
+*.log
+npm-debug.log*

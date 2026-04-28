@@ -1,0 +1,16 @@
+/* Tailwind CSS v4 — includes preflight reset + utilities */
+@import "tailwindcss";
+@source "../**/*.html";
+@source "../js/**/*.js";
+
+/* Custom Theme — Font families for utility classes */
+@theme {
+  --font-display: 'Poppins', 'Inter', sans-serif;
+  --font-body: 'Inter', -apple-system, sans-serif;
+  --color-primary: #b7102a;
+  --color-primary-light: #db313f;
+  --color-primary-dark: #92001c;
+}
+
+/* Custom Styles — loaded in 'components' layer (after preflight, before utilities) */
+@import "./style.css" layer(components);

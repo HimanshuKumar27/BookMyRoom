@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Your booking at BookMyRoom has been confirmed!">
+  <title>Booking Confirmed — BookMyRoom</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/favicon-192.png">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap" media="print" onload="this.media='all'">
+  <link rel="preload" href="css/tailwind.css?v=3" as="style">
+  <link rel="stylesheet" href="css/tailwind.css?v=3">
+  <style>
+    .confetti { position: fixed; top: -10px; font-size: 1.5rem; animation: fall linear forwards; pointer-events: none; z-index: 100; }
+    @keyframes fall {
+      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar" id="navbar"></nav>
+
+<div class="success-container">
+  <div class="gradient-blur gold" style="top:30%;left:-100px;"></div>
+  <div class="gradient-blur blue" style="bottom:20%;right:-100px;"></div>
+
+  <div class="glass-card success-card animate-fade-in-up">
+    <div class="success-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+    <h1>Booking <span style="color:var(--color-primary);">Confirmed!</span></h1>
+    <p id="email-status-message">Your reservation has been successfully placed.</p>
+
+    <div class="booking-summary" id="booking-summary">
+      <div class="text-center py-4 text-gray-400">Loading booking details...</div>
+    </div>
+
+    <div class="flex flex-wrap justify-center gap-4 mt-8">
+      <a href="my-bookings.html" class="btn-primary">View My Bookings</a>
+      <a href="rooms.html" class="btn-secondary">Browse More Rooms</a>
+    </div>
+  </div>
+</div>
+
+<footer class="footer" id="footer"></footer>
+
+<script type="module">
+  import { renderNavbar, renderFooter, updateNavbarAuth, formatCurrency, formatDate, checkAdmin, escapeHTML } from './js/utils.js?v=2';
+  import { supabase } from './js/supabase-config.js';
+
+  renderNavbar('');
+  renderFooter();
+
+  // Auth
+  const { data: { user } } = await supabase.auth.getUser();
+  if (user) {
+    const isAdmin = await checkAdmin(user.id);
+    updateNavbarAuth(user, isAdmin);
+  }
+
+  // Load booking from session storage
+  const summaryDiv = document.getElementById('booking-summary');
+  const bookingStr = sessionStorage.getItem('lastBooking');
+
+  if (bookingStr) {
+    try {
+      const b = JSON.parse(bookingStr);
+      document.getElementById('email-status-message').textContent = b.emailSent
+        ? 'Your reservation has been successfully placed. A confirmation email has been sent to your inbox.'
+        : 'Your reservation has been successfully placed. Email confirmation could not be sent, so please save your booking ID.';
+      summaryDiv.innerHTML = `
+        <div class="row">
+          <span class="label">Booking ID</span>
+          <span style="font-family:monospace;font-size:0.85rem;">${b.bookingId?.slice(0, 12) || '—'}...</span>
+        </div>
+        <div class="row">
+          <span class="label">Room</span>
+          <span>${escapeHTML(b.room_name || b.roomName)}</span>
+        </div>
+        <div class="row">
+          <span class="label">Location</span>
+          <span>${escapeHTML(b.room_city || b.roomCity || 'India')}</span>
+        </div>
+        <div class="row">
+          <span class="label">Guest</span>
+          <span>${escapeHTML(b.guest_name || b.guestName)}</span>
+        </div>
+        <div class="row">
+          <span class="label">Check-in</span>
+          <span>${formatDate(b.check_in || b.checkIn)}</span>
+        </div>
+        <div class="row">
+          <span class="label">Check-out</span>
+          <span>${formatDate(b.check_out || b.checkOut)}</span>
+        </div>
+        <div class="row">
+          <span class="label">Duration</span>
+          <span>${b.nights} night${b.nights > 1 ? 's' : ''}</span>
+        </div>
+        <div class="row">
+          <span class="label">Guests</span>
+          <span>${b.guests}</span>
+        </div>
+        <div class="row">
+          <span class="label">Room Charges</span>
+          <span>${formatCurrency(b.room_charges || b.roomCharges)}</span>
+        </div>
+        ${b.discount && b.discount > 0 ? `
+        <div class="row" style="color:#10b981;">
+          <span class="label" style="color:#10b981;">Discount (${b.coupon_code || 'WELCOME20'})</span>
+          <span>- ${formatCurrency(b.discount)}</span>
+        </div>` : ''}
+        <div class="row">
+          <span class="label">${b.gst_label || 'GST'}</span>
+          <span>${b.tax > 0 ? formatCurrency(b.tax) : 'FREE'}</span>
+        </div>
+        <div class="row">
+          <span class="label">Total Amount</span>
+          <span>${formatCurrency(b.total_cost || b.totalCost)}</span>
+        </div>
+      `;
+    } catch(e) {
+      summaryDiv.innerHTML = '<div class="text-center py-4 text-gray-400">Could not load booking details.</div>';
+    }
+  } else {
+    document.getElementById('email-status-message').textContent = 'No recent booking details were found in this browser session.';
+    summaryDiv.innerHTML = `
+      <div class="text-center py-4 text-gray-400">
+        No booking details found. <a href="rooms.html" style="color:var(--color-primary);">Browse rooms →</a>
+      </div>
+    `;
+  }
+
+  // Confetti effect
+  function spawnConfetti() {
+    const shapes = ['●', '■', '▲', '◆', '★', '♦'];
+    for (let i = 0; i < 30; i++) {
+      const colors = ['#e63946', '#f1c40f', '#2ecc71', '#3498db', '#9b59b6', '#e67e22'];
+      const el = document.createElement('div');
+      el.className = 'confetti';
+      el.textContent = shapes[Math.floor(Math.random() * shapes.length)];
+      el.style.color = colors[Math.floor(Math.random() * colors.length)];
+      el.style.left = Math.random() * 100 + 'vw';
+      el.style.animationDuration = (2 + Math.random() * 3) + 's';
+      el.style.animationDelay = (Math.random() * 2) + 's';
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 6000);
+    }
+  }
+  spawnConfetti();
+</script>
+
+</body>
+</html>
