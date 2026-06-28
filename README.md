@@ -2,8 +2,6 @@
 
 A full-stack hotel booking web application for discovering and booking budget to premium hotel rooms across India. Built with vanilla HTML/CSS/JS, Tailwind CSS, Supabase, and deployed on Netlify.
 
-> **Live Site:** Deployed on [Netlify](https://bookmyroomonline.netlify.app/)
-
 ---
 
 ## ✨ Features
