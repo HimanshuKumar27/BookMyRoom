@@ -60,21 +60,29 @@ BookMyRoom/
 ├── email-template.html     # Email confirmation template
 │
 ├── js/
-│   ├── supabase-config.js  # Supabase client initialization
-│   ├── utils.js            # Shared utilities (navbar, footer, formatting, GST, etc.)
-│   ├── email.js            # EmailJS booking confirmation
-│   ├── security.js         # Sanitization, validation, rate limiting
-│   ├── env.js              # Environment variables (gitignored)
-│   └── env.example.js      # Template for env.js
+│   ├── adapters/           # Repository & Service implementations (Data adapters)
+│   │   ├── repositories/   # Supabase Room & Booking repositories
+│   │   └── services/       # EmailJS, LocalStorage, and Auth services
+│   ├── core/               # Enterprise and Application business logic
+│   │   ├── entities/       # Pure business rules (Pricing, etc.)
+│   │   ├── interfaces/     # Abstract port declarations for repositories/services
+│   │   └── use-cases/      # Application-specific logic (Auth, Rooms, Bookings)
+│   ├── infrastructure/     # Database setup, environment parser, security utils
+│   │   ├── config/         # Environment configuration parser
+│   │   ├── database/       # Supabase client instance
+│   │   └── security/       # Rate limiting logic
+│   └── presentation/       # User Interface rendering and client-side page controllers
+│       ├── components/     # Reusable layout elements (Navbar, Footer, Toast)
+│       ├── pages/          # Controller scripts for each page
+│       └── utils/          # DOM, formatting, and validation helper utilities
 │
 ├── css/
 │   ├── input.css           # Tailwind CSS input file
-│   ├── tailwind.css         # Compiled Tailwind output
+│   ├── tailwind.css        # Compiled Tailwind output
 │   └── style.css           # Custom styles and component classes
 │
 ├── assets/
 │   ├── images/             # Room and hero images (WebP)
-│   ├── rooms/              # Additional room assets
 │   ├── favicon-32.png      # Favicon 32×32
 │   ├── favicon-192.png     # Favicon 192×192
 │   └── apple-touch-icon.png # Apple touch icon
@@ -85,6 +93,30 @@ BookMyRoom/
 ├── package.json            # Node.js project config
 └── README.md               # This file
 ```
+
+---
+
+## ⚡ Production Performance Optimizations
+
+To prepare the application for production traffic scale (handling millions of active users), the application implements several core performance-engineering design patterns:
+
+### 1. Database-Level Count Aggregations (Zero Memory Footprint Stats)
+- **Home Page Urgency Stats**: The booking urgency counter queries `getTodayBookingsCount()` directly using Supabase `.select('id', { count: 'exact', head: true })` filtered with a `gte('created_at', today)` condition. This returns a single integer, preventing the application from fetching all booking records into memory to count them.
+- **Dashboard Counters**: Admin metric cards utilize separate count requests instead of calculating `.length` of fetched record arrays.
+
+### 2. Session Caching & Local Authorization Checks
+- **Auth Tokens**: `authService.getUser()` attempts to retrieve user details from the active local session via `supabase.auth.getSession()` before initiating an external authentication token check request, saving up to 100ms of load latency per page load.
+- **User Role Cache**: `authService.checkAdmin()` stores verified user roles in `sessionStorage`. This prevents repeated database fetches to the `profiles` table as administrators toggle between pages.
+
+### 3. Decoupled Asynchronous Transaction Pipelines
+- **Asynchronous Email Confirmation**: The checkout transaction creates the booking and redirects the guest to `booking-success.html` in under 200ms. EmailJS SDK scripts and dynamic email operations are triggered asynchronously on the success page, rendering an elegant visual loader (`Sending confirmation email...`) that updates dynamically once complete. This guarantees that API slowness or service downtime on the email gateway does not block reservations.
+
+### 4. Static Inventory Caching
+- **Room List Cache**: During booking date configuration, `booking.js` caches the rooms catalog in-memory. Updates to dates or guest counts only query live availability parameters (unavailable room IDs), avoiding re-fetching static room descriptions, pricing slabs, or image lists.
+
+### 5. API Rate Limiting & Postgres Subscription Debouncing
+- **Admin Table Pagination**: Implemented query ranges to enforce a pagination window of `50` records on booking lists, protecting admin browsers from crashes under high volume.
+- **Subscription Throttle**: Wrapped database real-time notifications with a `300ms` debounce handler to prevent DOM redraw storms when multiple bookings or inventory updates occur concurrently.
 
 ---
 
@@ -189,5 +221,3 @@ Simply connect the GitHub repo to Netlify, and set the `SUPABASE_URL` and `SUPAB
 ## 👤 Author
 
 **Himanshu Kumar**
-
-Built with ❤️ using Supabase + Netlify

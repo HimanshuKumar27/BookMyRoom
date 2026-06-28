@@ -75,98 +75,9 @@
 
 <div id="form-errors"></div>
 
-<script>
-  function togglePassword(fieldId, btn) {
-    const input = document.getElementById(fieldId);
-    if (input.type === 'password') {
-      input.type = 'text';
-      btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
-    } else {
-      input.type = 'password';
-      btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
-    }
-  }
-</script>
 
-<script type="module">
-  import { renderNavbar, showToast } from './js/utils.js?v=2';
-  import { supabase } from './js/supabase-config.js';
-  import { rateLimiters, validateForm, sanitize, showFormErrors } from './js/security.js';
 
-  renderNavbar('');
-
-  const form = document.getElementById('register-form');
-  const errorDiv = document.getElementById('register-error');
-  const btnRegister = document.getElementById('btn-register');
-
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    const fullname = sanitize(document.getElementById('fullname').value);
-    const email = sanitize(document.getElementById('email').value);
-    const phone = sanitize(document.getElementById('phone').value);
-    const password = document.getElementById('password').value;
-    const confirmPassword = document.getElementById('confirm-password').value;
-
-    // --- Input Validation ---
-    const validation = validateForm({
-      'Full Name': { value: fullname, rules: ['required', 'name'] },
-      'Email': { value: email, rules: ['required', 'email'] },
-      'Phone': { value: phone, rules: ['required', 'phone'] },
-      'Password': { value: password, rules: ['required', 'password'] }
-    });
-
-    if (password !== confirmPassword) {
-      validation.errors.push('Passwords do not match.');
-      validation.valid = false;
-    }
-
-    if (!validation.valid) {
-      showFormErrors(validation.errors, 'form-errors');
-      return;
-    }
-    showFormErrors([], 'form-errors');
-
-    // --- Rate Limiting ---
-    const rateCheck = rateLimiters.register.check();
-    if (!rateCheck.allowed) {
-      const waitSec = rateLimiters.register.getRemainingTime();
-      errorDiv.textContent = `Too many registration attempts. Please try again in ${Math.ceil(waitSec / 60)} minutes.`;
-      errorDiv.classList.remove('hidden');
-      return;
-    }
-
-    btnRegister.disabled = true;
-    btnRegister.textContent = 'Creating Account...';
-    errorDiv.classList.add('hidden');
-
-    try {
-      // Sign up with Supabase Auth — the DB trigger auto-creates the profile
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: { full_name: fullname, phone: phone } // trigger reads these to create profile
-        }
-      });
-
-      if (authError) throw authError;
-
-      rateLimiters.register.reset();
-      showToast('Account created! Welcome to BookMyRoom', 'success');
-      setTimeout(() => { window.location.href = 'index.html'; }, 1200);
-    } catch (error) {
-      let msg = 'Registration failed. Please try again.';
-      if (error.message?.includes('already registered')) msg = 'An account with this email already exists.';
-      else if (error.message?.includes('password')) msg = 'Password is too weak. Use at least 6 characters.';
-      else if (error.message) msg = error.message;
-      errorDiv.textContent = msg;
-      errorDiv.classList.remove('hidden');
-      btnRegister.disabled = false;
-      btnRegister.textContent = 'Create Account';
-    }
-  });
-</script>
+<script type="module" src="./js/presentation/pages/register.js"></script>
 
 </body>
 </html>

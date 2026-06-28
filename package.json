@@ -6,7 +6,7 @@
   "scripts": {
     "build:css": "tailwindcss -i css/input.css -o css/tailwind.css --minify",
     "dev:css": "tailwindcss -i css/input.css -o css/tailwind.css --watch",
-    "check:js": "node --check js/email.js && node --check js/env.example.js && node --check js/env.js && node --check js/security.js && node --check js/supabase-config.js && node --check js/utils.js",
+    "check:js": "node scripts/check-syntax.js",
     "check": "npm run build:css && npm run check:js"
   },
   "keywords": [],
