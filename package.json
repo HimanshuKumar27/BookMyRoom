@@ -4,10 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "generate:env": "node scripts/generate-env.js",
     "build:css": "tailwindcss -i css/input.css -o css/tailwind.css --minify",
     "dev:css": "tailwindcss -i css/input.css -o css/tailwind.css --watch",
     "check:js": "node scripts/check-syntax.js",
-    "check": "npm run build:css && npm run check:js"
+    "build": "npm run generate:env && npm run build:css",
+    "check": "npm run build && npm run check:js"
   },
   "keywords": [],
   "author": "",

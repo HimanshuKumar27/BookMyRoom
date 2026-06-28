@@ -3,7 +3,7 @@
 # ============================================================
 
 [build]
-  command = "npm run build:css"
+  command = "npm run build"
   publish = "."
 
 # SPA-like HTML fallback — all pages are at root
