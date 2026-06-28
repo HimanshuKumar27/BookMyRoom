@@ -2,7 +2,8 @@
 // Page Controller — Booking & Reservation Checkout
 // ============================================================
 
-import { renderNavbar, renderFooter, updateNavbarAuth } from '../components/navbar.js';
+import { renderNavbar, updateNavbarAuth } from '../components/navbar.js';
+import { renderFooter } from '../components/footer.js';
 import { showToast } from '../components/toast.js';
 import { getParam, getTodayISO, getTomorrowISO, parseSearchCriteria, escapeHTML } from '../utils/dom.js';
 import { formatCurrency } from '../utils/formatters.js';

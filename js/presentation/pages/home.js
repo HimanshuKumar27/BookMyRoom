@@ -2,7 +2,8 @@
 // Page Controller — Home Page
 // ============================================================
 
-import { renderNavbar, renderFooter, updateNavbarAuth } from '../components/navbar.js';
+import { renderNavbar, updateNavbarAuth } from '../components/navbar.js';
+import { renderFooter } from '../components/footer.js';
 import { initRevealAnimations, getTodayISO, getTomorrowISO } from '../utils/dom.js';
 import { formatCurrency } from '../utils/formatters.js';
 import { SupabaseAuthService } from '../../adapters/services/SupabaseAuthService.js';

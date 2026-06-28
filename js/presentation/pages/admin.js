@@ -2,7 +2,8 @@
 // Page Controller — Admin Dashboard
 // ============================================================
 
-import { renderNavbar, renderFooter, updateNavbarAuth } from '../components/navbar.js';
+import { renderNavbar, updateNavbarAuth } from '../components/navbar.js';
+import { renderFooter } from '../components/footer.js';
 import { showToast } from '../components/toast.js';
 import { formatCurrency, formatDate } from '../utils/formatters.js';
 import { sanitize, validateForm, isValidPrice, isValidPositiveInt, isValidText, showFormErrors } from '../utils/validators.js';

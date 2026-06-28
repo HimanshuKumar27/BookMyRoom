@@ -2,7 +2,8 @@
 // Page Controller — Guest Dashboard (My Bookings)
 // ============================================================
 
-import { renderNavbar, renderFooter, updateNavbarAuth } from '../components/navbar.js';
+import { renderNavbar, updateNavbarAuth } from '../components/navbar.js';
+import { renderFooter } from '../components/footer.js';
 import { showToast } from '../components/toast.js';
 import { formatCurrency, formatDate } from '../utils/formatters.js';
 import { GetUserBookingsUseCase } from '../../core/use-cases/bookings/GetUserBookingsUseCase.js';

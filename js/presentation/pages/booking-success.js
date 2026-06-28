@@ -2,7 +2,8 @@
 // Page Controller — Booking Success Receipt
 // ============================================================
 
-import { renderNavbar, renderFooter, updateNavbarAuth } from '../components/navbar.js';
+import { renderNavbar, updateNavbarAuth } from '../components/navbar.js';
+import { renderFooter } from '../components/footer.js';
 import { escapeHTML } from '../utils/dom.js';
 import { formatCurrency, formatDate } from '../utils/formatters.js';
 import { SupabaseAuthService } from '../../adapters/services/SupabaseAuthService.js';

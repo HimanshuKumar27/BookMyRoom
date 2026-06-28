@@ -2,7 +2,8 @@
 // Page Controller — Rooms Directory
 // ============================================================
 
-import { renderNavbar, renderFooter, updateNavbarAuth } from '../components/navbar.js';
+import { renderNavbar, updateNavbarAuth } from '../components/navbar.js';
+import { renderFooter } from '../components/footer.js';
 import { showToast } from '../components/toast.js';
 import { escapeHTML, getParam, parseSearchCriteria } from '../utils/dom.js';
 import { formatCurrency } from '../utils/formatters.js';
