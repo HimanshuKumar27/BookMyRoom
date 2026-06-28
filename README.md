@@ -176,11 +176,19 @@ npm run dev:css
 
 The project is configured for Netlify out of the box:
 
-- **Build command:** `npm run build:css`
+- **Build command:** `npm run build` (automatically compiles `js/env.js` and builds CSS assets)
 - **Publish directory:** `.` (root)
 - **Redirects and headers** are pre-configured in `netlify.toml`
 
-Simply connect the GitHub repo to Netlify, and set the `SUPABASE_URL` and `SUPABASE_ANON_KEY` environment variables in the Netlify dashboard.
+### Environment Variables
+Configure the following environment variables in your Netlify Dashboard under **Site configuration > Environment variables** to compile the configuration during deploy:
+
+* `SUPABASE_URL` — Your Supabase project URL
+* `SUPABASE_ANON_KEY` — Your Supabase Project API Anon key
+* `EMAILJS_PUBLIC_KEY` — Your EmailJS Account Public Key
+* `EMAILJS_SERVICE_ID` — Your EmailJS Service ID
+* `EMAILJS_TEMPLATE_ID` — Your EmailJS Template ID
+* `ADMIN_EMAIL` — The email address where admin notifications should be sent
 
 ---
 
