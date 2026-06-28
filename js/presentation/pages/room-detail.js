@@ -4,9 +4,9 @@
 
 import { renderNavbar, renderFooter, updateNavbarAuth } from '../components/navbar.js';
 import { showToast } from '../components/toast.js';
-import { escapeHTML, getParam } from '../utils/dom.js';
+import { escapeHTML, getParam, getTodayISO, getTomorrowISO } from '../utils/dom.js';
 import { formatCurrency } from '../utils/formatters.js';
-import { getGSTInfo } from '../../core/entities/Pricing.js';
+import { getGSTInfo, calculateNights, calculatePricing } from '../../core/entities/Pricing.js';
 import { GetRoomDetailsUseCase } from '../../core/use-cases/rooms/GetRoomDetailsUseCase.js';
 import { SupabaseRoomRepository } from '../../adapters/repositories/SupabaseRoomRepository.js';
 import { SupabaseAuthService } from '../../adapters/services/SupabaseAuthService.js';
@@ -119,13 +119,20 @@ document.addEventListener('DOMContentLoaded', async () => {
       const bookingParams = searchParams.toString();
       const bookingHref = `booking.html?roomId=${safeRoomId}${bookingParams ? `&${bookingParams}` : ''}`;
 
-      const amenityTags = (room.amenities || []).map(a => `<span class="amenity-tag">${escapeHTML(a)}</span>`).join('');
       const bookDisabled = room.status !== 'Available' ? 'pointer-events: none; opacity: 0.5;' : '';
       const gstInfo = getGSTInfo(room.price);
       const gstAmount = Math.round(room.price * gstInfo.rate);
       const gstBadgeColor = gstInfo.rate === 0 ? '#10b981' : (gstInfo.rate === 0.05 ? '#f59e0b' : '#ef4444');
       const gstBadgeText = gstInfo.rate === 0 ? 'No GST' : `+ ${gstInfo.percent} GST`;
       const isSaved = wishlist.includes(roomId);
+
+      let guestOptions = '';
+      const maxCapacity = room.capacity || 2;
+      const initialGuests = parseInt(searchParams.get('guests') || '2', 10) || 2;
+      for (let i = 1; i <= maxCapacity; i++) {
+        const isSelected = i === Math.min(initialGuests, maxCapacity) ? 'selected' : '';
+        guestOptions += `<option value="${i}" ${isSelected}>${i} Guest${i > 1 ? 's' : ''}</option>`;
+      }
 
       if (container) {
         container.innerHTML = `
@@ -148,7 +155,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                   ${roomCity}
                 </span>
                 <span class="px-2 py-0.5 bg-blue-50 text-blue-600 text-[10px] font-semibold rounded-full flex items-center gap-1">
-                  <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6.267 3.455a3.056 3.056 0 001.622-.873l1.038-.89a3.055 3.055 0 011.01 4.38l-.89 1.038a3.056 3.056 0 00-.873 1.622l1.038.89a3.055 3.055 0 01-4.38 1.01l-.89-1.038a3.056 3.056 0 00-1.622.873l-1.038.89a3.055 3.055 0 01-1.01-4.38l.89-1.038a3.056 3.056 0 00.873-1.622l-1.038-.89a3.055 3.055 0 014.38-1.01l.89 1.038a3.056 3.056 0 001.622-.873l1.038-.89a3.055 3.055 0 011.01-4.38l-.89-1.038a3.056 3.056 0 00-.873-1.622l-1.038-.89a3.055 3.055 0 014.38-1.01l.89 1.038a3.056 3.056 0 001.622-.873l1.038-.89a3.055 3.055 0 011.01-4.38l-.89-1.038a3.056 3.056 0 00-.873-1.622L8.9 4.97a3.056 3.056 0 01.873-1.622l1.038-.89a3.055 3.055 0 011.01-4.38l.89 1.038a3.056 3.056 0 001.622.873l1.038.89a3.055 3.055 0 01-1.01 4.38l-.89 1.038a3.056 3.056 0 00-.873 1.622l-1.038.89a3.055 3.055 0 01-4.38 1.01l.89-1.038a3.056 3.056 0 00-1.622.873l-1.038.89a3.055 3.055 0 01-1.01-4.38l.89-1.038a3.056 3.056 0 00.873-1.622L2.3 8.08a3.056 3.056 0 01-.873-1.622l1.038-.89a3.055 3.055 0 011.01-4.38l-.89-1.038a3.056 3.056 0 00-.873-1.622l-1.038-.89a3.055 3.055 0 014.38-1.01l.89 1.038a3.056 3.056 0 001.622-.873l1.038-.89a3.055 3.055 0 011.01-4.38l-.89-1.038a3.056 3.056 0 00-.873-1.622l-1.038-.89a3.055 3.055 0 014.38-1.01l.89 1.038a3.056 3.056 0 001.622-.873l1.038-.89a3.055 3.055 0 011.01-4.38l-.89-1.038a3.056 3.056 0 00-.873-1.622l-1.038-.89a3.078 3.078 0 014.38-1.01l.89 1.038z" clip-rule="evenodd"></path></svg>
+                  <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6.267 3.455a3.056 3.056 0 001.622-.873l1.038-.89a3.055 3.055 0 011.01 4.38l-.89 1.038a3.056 3.056 0 00-.873 1.622l1.038.89a3.055 3.055 0 01-4.38 1.01l-.89-1.038a3.056 3.056 0 00-1.622.873l-1.038.89a3.055 3.055 0 01-1.01-4.38l.89-1.038a3.056 3.056 0 00.873-1.622l-1.038-.89a3.055 3.055 0 014.38-1.01l.89 1.038a3.056 3.056 0 001.622-.873l1.038-.89a3.055 3.055 0 011.01-4.38l-.89-1.038a3.056 3.056 0 00-.873-1.622l-1.038-.89a3.055 3.055 0 014.38-1.01l.89 1.038a3.056 3.056 0 001.622-.873l1.038-.89a3.055 3.055 0 011.01-4.38l-.89-1.038a3.056 3.056 0 00-.873-1.622L8.9 4.97a3.056 3.056 0 01.873-1.622l1.038-.89a3.055 3.055 0 011.01-4.38l.89 1.038a3.056 3.056 0 001.622.873l1.038.89a3.055 3.055 0 01-1.01 4.38l-.89 1.038a3.056 3.056 0 00-.873-1.622l-1.038-.89a3.055 3.055 0 01-4.38 1.01l.89-1.038a3.056 3.056 0 00-1.622.873l-1.038.89a3.055 3.055 0 01-1.01-4.38l.89-1.038a3.056 3.056 0 00.873-1.622L2.3 8.08a3.056 3.056 0 01-.873-1.622l1.038-.89a3.055 3.055 0 011.01-4.38l-.89-1.038a3.056 3.056 0 00-.873-1.622l-1.038-.89a3.055 3.055 0 014.38-1.01l.89 1.038a3.056 3.056 0 001.622-.873l1.038-.89a3.055 3.055 0 011.01-4.38l-.89-1.038a3.056 3.056 0 00-.873-1.622l-1.038-.89a3.055 3.055 0 014.38-1.01l.89 1.038a3.056 3.056 0 001.622-.873l1.038-.89a3.055 3.055 0 011.01-4.38l-.89-1.038a3.056 3.056 0 00-.873-1.622l-1.038-.89a3.078 3.078 0 014.38-1.01l.89 1.038z" clip-rule="evenodd"></path></svg>
                   BookMyRoom Verified
                 </span>
               </div>
@@ -283,24 +290,28 @@ document.addEventListener('DOMContentLoaded', async () => {
                   <div class="border border-gray-200 rounded-2xl mb-6 overflow-hidden">
                     <div class="flex border-b border-gray-200">
                       <div class="w-1/2 p-3 border-r border-gray-200 hover:bg-gray-50 transition-colors">
-                        <div class="text-[10px] uppercase font-bold text-gray-500 mb-1">Check-in</div>
-                        <div class="font-medium text-sm text-gray-900">Select Date</div>
+                        <label for="detail-checkin" class="block text-[10px] uppercase font-bold text-gray-500 mb-1">Check-in</label>
+                        <input type="date" id="detail-checkin" class="w-full bg-transparent font-medium text-sm text-gray-900 border-none outline-none p-0 cursor-pointer focus:ring-0" style="color-scheme: light;">
                       </div>
                       <div class="w-1/2 p-3 hover:bg-gray-50 transition-colors">
-                        <div class="text-[10px] uppercase font-bold text-gray-500 mb-1">Check-out</div>
-                        <div class="font-medium text-sm text-gray-900">Select Date</div>
+                        <label for="detail-checkout" class="block text-[10px] uppercase font-bold text-gray-500 mb-1">Check-out</label>
+                        <input type="date" id="detail-checkout" class="w-full bg-transparent font-medium text-sm text-gray-900 border-none outline-none p-0 cursor-pointer focus:ring-0" style="color-scheme: light;">
                       </div>
                     </div>
-                    <div class="p-3 hover:bg-gray-50 transition-colors cursor-pointer flex justify-between items-center">
-                      <div>
-                        <div class="text-[10px] uppercase font-bold text-gray-500 mb-1">Guests</div>
-                        <div class="font-medium text-sm text-gray-900">1 Room, 2 Guests</div>
+                    <div class="p-3 hover:bg-gray-50 transition-colors flex justify-between items-center relative">
+                      <div class="w-full pr-6">
+                        <label for="detail-guests" class="block text-[10px] uppercase font-bold text-gray-500 mb-1">Guests</label>
+                        <select id="detail-guests" class="w-full bg-transparent font-medium text-sm text-gray-900 border-none outline-none p-0 cursor-pointer appearance-none focus:ring-0">
+                          ${guestOptions}
+                        </select>
                       </div>
-                      <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                      <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                      </div>
                     </div>
                   </div>
 
-                  <a href="${bookingHref}" class="block w-full py-4 bg-primary hover:bg-primary-dark text-white text-center font-bold text-lg rounded-xl transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5 mb-4 ${bookDisabled}">
+                  <a href="${bookingHref}" id="detail-reserve-btn" class="block w-full py-4 bg-primary hover:bg-primary-dark text-white text-center font-bold text-lg rounded-xl transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5 mb-4 ${bookDisabled}">
                     ${roomStatus === 'Available' ? 'Reserve Now' : 'Sold Out'}
                   </a>
 
@@ -323,16 +334,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                   <div class="space-y-3 pt-4 border-t border-gray-100">
                     <div class="flex justify-between text-gray-600">
-                      <span class="underline decoration-dotted cursor-help" title="Room Base Price">${formatCurrency(room.price)} x 1 night</span>
-                      <span>${formatCurrency(room.price)}</span>
+                      <span id="detail-base-label" class="underline decoration-dotted cursor-help" title="Room Base Price">${formatCurrency(room.price)} x 1 night</span>
+                      <span id="detail-base-cost">${formatCurrency(room.price)}</span>
                     </div>
                     <div class="flex justify-between text-gray-600">
-                      <span class="underline decoration-dotted cursor-help" title="GST as per Indian hotel tariff rules">GST (${gstInfo.percent})</span>
-                      <span>${gstAmount > 0 ? formatCurrency(gstAmount) : 'FREE'}</span>
+                      <span id="detail-gst-label" class="underline decoration-dotted cursor-help" title="GST as per Indian hotel tariff rules">GST (${gstInfo.percent})</span>
+                      <span id="detail-gst-cost">${gstAmount > 0 ? formatCurrency(gstAmount) : 'FREE'}</span>
                     </div>
                     <div class="flex justify-between text-gray-900 font-bold pt-3 border-t border-gray-100 text-lg">
                       <span>Total</span>
-                      <span>${formatCurrency(room.price + gstAmount)}</span>
+                      <span id="detail-total-cost">${formatCurrency(room.price + gstAmount)}</span>
                     </div>
                     <div class="text-center text-xs text-gray-400 mt-3 pt-3 border-t border-gray-100">
                       ✓ Best price guaranteed • No hidden charges • Free cancellation
@@ -354,6 +365,72 @@ document.addEventListener('DOMContentLoaded', async () => {
             </div>
           </div>
         `;
+
+        // Setup interactive booking widget bindings
+        const checkinInput = document.getElementById('detail-checkin');
+        const checkoutInput = document.getElementById('detail-checkout');
+        const guestsSelect = document.getElementById('detail-guests');
+        const reserveBtn = document.getElementById('detail-reserve-btn');
+
+        if (checkinInput && checkoutInput && guestsSelect) {
+          const urlParams = new URLSearchParams(window.location.search);
+          const initialCheckin = urlParams.get('checkin') || getTodayISO();
+          const initialCheckout = urlParams.get('checkout') || getTomorrowISO();
+          const initialGuests = urlParams.get('guests') || '2';
+
+          checkinInput.value = initialCheckin;
+          checkinInput.min = getTodayISO();
+          checkoutInput.value = initialCheckout;
+
+          const updateCheckoutMin = (ciVal) => {
+            const nextDay = new Date(ciVal);
+            nextDay.setDate(nextDay.getDate() + 1);
+            checkoutInput.min = nextDay.toISOString().split('T')[0];
+          };
+
+          updateCheckoutMin(initialCheckin);
+
+          const updateBookingWidget = () => {
+            const ci = checkinInput.value;
+            let co = checkoutInput.value;
+            const gu = guestsSelect.value;
+
+            if (co <= ci) {
+              const nextDay = new Date(ci);
+              nextDay.setDate(nextDay.getDate() + 1);
+              co = nextDay.toISOString().split('T')[0];
+              checkoutInput.value = co;
+            }
+
+            const nights = calculateNights(ci, co);
+            const pricing = calculatePricing(room.price, nights);
+
+            const baseLabelEl = document.getElementById('detail-base-label');
+            const baseCostEl = document.getElementById('detail-base-cost');
+            const gstLabelEl = document.getElementById('detail-gst-label');
+            const gstCostEl = document.getElementById('detail-gst-cost');
+            const totalCostEl = document.getElementById('detail-total-cost');
+
+            if (baseLabelEl) baseLabelEl.textContent = `${formatCurrency(room.price)} x ${nights} night${nights > 1 ? 's' : ''}`;
+            if (baseCostEl) baseCostEl.textContent = formatCurrency(pricing.roomCharges);
+            if (gstLabelEl) gstLabelEl.textContent = `GST (${pricing.gstPercent})`;
+            if (gstCostEl) gstCostEl.textContent = pricing.taxAmount > 0 ? formatCurrency(pricing.taxAmount) : 'FREE';
+            if (totalCostEl) totalCostEl.textContent = formatCurrency(pricing.total);
+
+            if (reserveBtn) {
+              reserveBtn.href = `booking.html?roomId=${safeRoomId}&checkin=${ci}&checkout=${co}&guests=${gu}&rooms=1`;
+            }
+          };
+
+          checkinInput.addEventListener('change', () => {
+            updateCheckoutMin(checkinInput.value);
+            updateBookingWidget();
+          });
+          checkoutInput.addEventListener('change', updateBookingWidget);
+          guestsSelect.addEventListener('change', updateBookingWidget);
+
+          updateBookingWidget();
+        }
       }
     } catch (error) {
       console.error('Error loading room:', error);
